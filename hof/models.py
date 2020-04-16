@@ -1,8 +1,17 @@
 import datetime
 from django.db import models
+import datetime as d
 from django.utils import datezone
 
-# Create your models here.
+
+class Group(models.Model):
+    year = models.IntegerField(default=int(d.datetime.now().year))
+    day_of_the_week = models.CharField(max_length=10)
+    lecturer = models.CharField(max_length=30)
+
+    def __str__(self):
+        return f'{self.year}_{self.day_of_the_week}_{self.lecturer}'
+      
 
 class Score(models.Model):
     task = models.ForeignKey(Task)
@@ -13,6 +22,7 @@ class Score(models.Model):
     def __str__(self):
         return self.acquired_blood_cells
 
+      
 class Student(models.Model):
     group = models.ForeignKey(Group)
     first_name = models.CharField(max_length=30)
