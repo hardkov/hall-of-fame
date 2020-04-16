@@ -2,3 +2,4 @@ hall-of-fame-harmonogram.pdf
 .idea
 venv
 __pycache__
+db.sqlite3
