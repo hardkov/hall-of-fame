@@ -1,0 +1,20 @@
+{% extends 'hof/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="card-deck">
+        {% for group in groups %}
+          <a href="{% url 'hof:group' group.id%}" class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{ group.lecturer }}</h5>
+              <p class="card-text">
+                  <strong>Day of the week:</strong> {{ group.day_of_the_week }}
+              </p>
+              <p class="card-text"><small class="text-muted">Year: {{ group.year }}</small></p>
+            </div>
+          </a>
+        {% endfor %}
+          </div>
+        </div>
+    </div>
+{% endblock %}

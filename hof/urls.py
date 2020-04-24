@@ -5,5 +5,10 @@ from hof import views
 app_name = 'hof'
 urlpatterns = [
     path('', views.index, name='index'),
-    path('test/', views.test, name='test')
+    # GROUPS
+    path('groups/', views.GroupsView.as_view(), name='groups'),
+    path('groups/<int:pk>', views.GroupView.as_view(), name='group'),
+    # STUDENTS
+    path('students/', views.StudentsView.as_view(), name='students'),
+    path('student/<int:pk>', views.StudentView.as_view(), name='student')
 ]

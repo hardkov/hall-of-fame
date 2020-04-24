@@ -27,3 +27,12 @@ body {
     padding: 10px;
     text-align: center;
 }
+
+.card {
+    color: inherit;
+    text-decoration: none;
+}
+
+.card:hover {
+    text-decoration: none;
+}

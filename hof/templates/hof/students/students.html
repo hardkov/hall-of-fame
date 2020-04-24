@@ -1,0 +1,21 @@
+{% extends 'hof/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="card-deck">
+        {% for student in students %}
+          <a href="{% url 'hof:student' student.id%}" class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{ student.nickname }}</h5>
+              <p class="card-text">
+                  <strong>Lecturer: </strong> {{ student.group.lecturer }} <br>
+                  <strong>Day of the week:</strong> {{ student.group.day_of_the_week }}
+              </p>
+              <p class="card-text"><small class="text-muted">Year: {{ student.group.year }}</small></p>
+            </div>
+          </a>
+        {% endfor %}
+          </div>
+        </div>
+    </div>
+{% endblock %}

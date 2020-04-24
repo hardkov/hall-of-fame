@@ -1,0 +1,17 @@
+{% extends 'hof/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="card">
+          <div class="card-header">
+              {{ group }}
+          </div>
+          <div class="card-body">
+            <h3>Student list:</h3>
+              {% for student in group.student_set.all %}
+                <p>{{ student.nickname }}</p>
+              {% endfor %}
+          </div>
+        </div>
+    </div>
+{% endblock %}
