@@ -15,10 +15,11 @@ class Task(models.Model):
 class Group(models.Model):
     year = models.IntegerField(default=int(datetime.datetime.now().year))
     day_of_the_week = models.CharField(max_length=10)
+    time = models.TimeField(default=datetime.time(8, 0, 0))
     lecturer = models.CharField(max_length=30)
 
     def __str__(self):
-        return f'{self.year}_{self.day_of_the_week}_{self.lecturer}'
+        return f'{self.year}_{self.day_of_the_week}_godz{self.time.hour}_{self.lecturer}'
 
 
 class Student(models.Model):

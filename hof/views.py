@@ -21,6 +21,7 @@ class GroupView(generic.DetailView):
     model = Group
     template_name = 'hof/groups/group.html'
 
+
 # STUDENT VIEWS
 class StudentsView(generic.ListView):
     model = Student
