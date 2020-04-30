@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     # hof
     'hof.apps.HofConfig',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
