@@ -1,15 +1,28 @@
 {% extends 'hof/base.html' %}
 
 {% block content %}
-    <div class="container">
-        <div class="card">
-          <div class="card-header">
-              {{ student.nickname }}
-          </div>
-          <div class="card-body">
-            <h3>{{ student.first_name }} {{ student.last_name }}</h3>
-              <h3>{{ student.group }}</h3>
-          </div>
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            {{ student.nickname }}
+        </div>
+        <div class="card-body">
+            {% if user.is_authenticated %}
+                <h4><strong>Name:</strong> {{ student.first_name }} {{ student.last_name }}</h4>
+            {% else %}
+                <div class="alert alert-danger" role="alert">
+                    Student's name is visible only for lecturers.
+                </div>
+            {% endif %}
+            <h5><strong>Group: </strong>{{ student.group }}</h5>
+
+            <h4 class="mt-5">Lastest scores:</h4>
+            <div class="student-scores">
+                {% for score in student.score_set.all %}
+                    <p>{{ score.task }}</p>
+                {% endfor %}
+            </div>
         </div>
     </div>
+</div>
 {% endblock %}

@@ -16,6 +16,9 @@ class GroupsView(generic.ListView):
     template_name = 'hof/groups/groups.html'
     context_object_name = 'groups'
 
+    def get_queryset(self):
+        return Group.objects.order_by('-year', 'day_of_the_week', 'time').all()
+
 
 class GroupView(generic.DetailView):
     model = Group
