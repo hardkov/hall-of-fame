@@ -49,11 +49,11 @@ def run():
     lecturer_group.user_set.add(lecturer2)
 
     # Groups
-    group1 = Group(year=2019, day_of_the_week=DayOfTheWeek.MONDAY, time=datetime.time(9, 35, 0), lecturer=lecturer1)
+    group1 = Group(year=2019, day_of_the_week=DayOfTheWeek.MON, time=datetime.time(9, 35, 0), lecturer=lecturer1)
     group1.save()
-    group2 = Group(year=2019, day_of_the_week=DayOfTheWeek.TUESDAY, time=datetime.time(11, 15, 0), lecturer=lecturer2)
+    group2 = Group(year=2019, day_of_the_week=DayOfTheWeek.TUE, time=datetime.time(11, 15, 0), lecturer=lecturer2)
     group2.save()
-    group3 = Group(year=2019, day_of_the_week=DayOfTheWeek.WEDNESDAY, time=datetime.time(12, 50, 0), lecturer=lecturer2)
+    group3 = Group(year=2019, day_of_the_week=DayOfTheWeek.WED, time=datetime.time(12, 50, 0), lecturer=lecturer2)
     group3.save()
 
     # TaskCollections

@@ -2,15 +2,14 @@ import datetime
 
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils.translation import gettext_lazy as _
 
 
 class DayOfTheWeek(models.TextChoices):
-    MONDAY = 'MON', _('Monday')
-    TUESDAY = 'TUE', _('Tuesday')
-    WEDNESDAY = 'WED', _('Wednesday')
-    THURSDAY = 'THU', _('Thursday')
-    FRIDAY = 'FRI', _('Friday')
+    MON = 'Monday'
+    TUE = 'Tuesday'
+    WED = 'Wednesday'
+    THU = 'Thursday'
+    FRI = 'Friday'
 
 
 class TaskCollection(models.Model):
@@ -33,7 +32,7 @@ class Group(models.Model):
     year = models.IntegerField(default=int(datetime.datetime.now().year))
 
     day_of_the_week = models.CharField(
-        max_length=3,
+        max_length=12,
         choices=DayOfTheWeek.choices
     )
 
