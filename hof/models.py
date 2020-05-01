@@ -41,7 +41,7 @@ class Group(models.Model):
     lecturer = models.ForeignKey(User, limit_choices_to={'groups__name': 'Lecturer'}, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.year}_{self.day_of_the_week}_godz{self.time.hour}_{self.lecturer}'
+        return f'{self.year}_{self.day_of_the_week}_hour{self.time.hour}_{self.lecturer}'
 
 
 class Student(models.Model):
