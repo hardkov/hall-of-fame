@@ -25,7 +25,7 @@ class GroupView(generic.DetailView):
 # STUDENT VIEWS
 def students(request):
     # Since we are grouping the students by year
-    years = Group.objects.values_list('year', flat=True).distinct()
+    years = Group.objects.order_by('-year').values_list('year', flat=True).distinct()
     students_by_year = {}
     for year in years:
         students_by_year[year] = {

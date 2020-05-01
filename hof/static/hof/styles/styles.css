@@ -42,3 +42,7 @@ body {
 .students {
     padding: 1rem 0;
 }
+
+.students__count {
+    margin-bottom: 1rem;
+}
