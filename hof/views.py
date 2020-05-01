@@ -26,15 +26,14 @@ class GroupView(generic.DetailView):
 def students(request):
     # Since we are grouping the students by year
     years = Group.objects.order_by('-year').values_list('year', flat=True).distinct()
-    students_by_year = {}
+    students_by_year = []
     for year in years:
-        students_by_year[year] = {
-            'students': Student.objects.filter(group__year=year),
-            'count': len(Student.objects.filter(group__year=year))
-        }
+        students_by_year.append({
+            'year': year,
+            'students': Student.objects.filter(group__year=year).values('id', 'nickname')
+        })
     students_total = len(Student.objects.all())
     context = {
-        'years': years,
         'students_by_year': students_by_year,
         'student_count': students_total
     }
