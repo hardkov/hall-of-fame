@@ -9,6 +9,6 @@ urlpatterns = [
     path('groups/', views.GroupsView.as_view(), name='groups'),
     path('groups/<int:pk>', views.GroupView.as_view(), name='group'),
     # STUDENTS
-    path('students/', views.StudentsView.as_view(), name='students'),
+    path('students/', views.students, name='students'),
     path('student/<int:pk>', views.StudentView.as_view(), name='student')
 ]

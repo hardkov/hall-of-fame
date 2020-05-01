@@ -23,10 +23,22 @@ class GroupView(generic.DetailView):
 
 
 # STUDENT VIEWS
-class StudentsView(generic.ListView):
-    model = Student
-    template_name = 'hof/students/students.html'
-    context_object_name = 'students'
+def students(request):
+    # Since we are grouping the students by year
+    years = Group.objects.values_list('year', flat=True).distinct()
+    students_by_year = {}
+    for year in years:
+        students_by_year[year] = {
+            'students': Student.objects.filter(group__year=year),
+            'count': len(Student.objects.filter(group__year=year))
+        }
+    students_total = len(Student.objects.all())
+    context = {
+        'years': years,
+        'students_by_year': students_by_year,
+        'student_count': students_total
+    }
+    return render(request, 'hof/students/students.html', context)
 
 
 class StudentView(generic.DetailView):

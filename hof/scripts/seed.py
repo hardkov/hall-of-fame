@@ -55,6 +55,8 @@ def run():
     group2.save()
     group3 = Group(year=2019, day_of_the_week=DayOfTheWeek.WED, time=datetime.time(12, 50, 0), lecturer=lecturer2)
     group3.save()
+    group4 = Group(year=2020, day_of_the_week=DayOfTheWeek.TUE, time=datetime.time(11, 15, 0), lecturer=lecturer1)
+    group4.save()
 
     # TaskCollections
     task_collection = TaskCollection(description='Kartkówki')
@@ -73,9 +75,11 @@ def run():
     student2.save()
     student3 = Student(group=group3, first_name="Barbara", last_name="Kurdej", nickname='Szatan')
     student3.save()
+    student4 = Student(group=group4, first_name="Felix", last_name="Ptak", nickname='bird')
+    student4.save()
 
     # Score
-    for s in [student1, student2, student3]:
+    for s in [student1, student2, student3, student4]:
         score = Score(task=task1, student=s, acquired_blood_cells=1, date=timezone.now())
         score.save()
         score = Score(task=task2, student=s, acquired_blood_cells=0, date=timezone.now())

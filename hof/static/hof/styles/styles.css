@@ -28,11 +28,17 @@ body {
     text-align: center;
 }
 
-.card {
+.card,
+.list-group-item {
     color: inherit;
     text-decoration: none;
 }
 
-.card:hover {
+.card:hover,
+.list-group-item:hover {
     text-decoration: none;
+}
+
+.students {
+    padding: 1rem 0;
 }

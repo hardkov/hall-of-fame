@@ -1,21 +1,36 @@
 {% extends 'hof/base.html' %}
 
 {% block content %}
-    <div class="container">
-        <div class="card-deck">
-        {% for student in students %}
-          <a href="{% url 'hof:student' student.id%}" class="card">
-            <div class="card-body">
-              <h5 class="card-title">{{ student.nickname }}</h5>
-              <p class="card-text">
-                  <strong>Lecturer: </strong> {{ student.group.lecturer }} <br>
-                  <strong>Day of the week:</strong> {{ student.group.day_of_the_week }}
-              </p>
-              <p class="card-text"><small class="text-muted">Year: {{ student.group.year }}</small></p>
-            </div>
-          </a>
-        {% endfor %}
-          </div>
+    <section class="students">
+        <div class="container">
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Total number of students
+                    <span class="badge badge-primary badge-pill">{{ student_count }}</span>
+                </li>
+            </ul>
+            {% for year in years %}
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-secondary d-flex justify-content-between align-items-center">
+                    {{ year }}
+                    <span class="badge badge-primary badge-pill">
+                        {% for key, value in students_by_year.items %}
+                            {% if key == year %}
+                                {{ value.count }}
+                            {% endif %}
+                        {% endfor %}
+                    </span>
+                </li>
+
+                {% for key, value in students_by_year.items %}
+                    {% if key == year %}
+                        {% for student in value.students %}
+                            <a href="{% url 'hof:student' student.id%}" class="list-group-item">{{ student.nickname }}</a>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            {% endfor %}
         </div>
-    </div>
+    </section>
 {% endblock %}
