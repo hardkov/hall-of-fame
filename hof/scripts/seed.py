@@ -9,8 +9,7 @@ from hof.models import Group, Student, TaskCollection, Task, Score
 from hof.models import DayOfTheWeek
 
 
-def run():
-    # Clearance
+def wipe():
     User.objects.filter(groups__name='Lecturer').delete()
     _Group.objects.filter(name='Lecturer').delete()
     Group.objects.all().delete()
@@ -19,7 +18,8 @@ def run():
     Task.objects.all().delete()
     Score.objects.all().delete()
 
-    # Lecturers
+
+def create_lecturers_group():
     lecturer_group = _Group(name='Lecturer')
     lecturer_group.save()
     permissions = Permission.objects.filter(
@@ -27,6 +27,14 @@ def run():
     )
     lecturer_group.permissions.add(*permissions)
     lecturer_group.save()
+    return lecturer_group
+
+
+def run():
+    # Clearance
+    wipe()
+    # Lecturers
+    lecturer_group = create_lecturers_group()
 
     lecturer1 = User.objects.create_user(
         username='mateusz',
