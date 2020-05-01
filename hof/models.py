@@ -16,6 +16,9 @@ class DayOfTheWeek(models.TextChoices):
 class TaskCollection(models.Model):
     description = models.CharField(max_length=200)
 
+    def __str__(self):
+        return self.description[:10]
+
 
 class Task(models.Model):
     task_collection = models.ForeignKey(TaskCollection, on_delete=models.CASCADE)

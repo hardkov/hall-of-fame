@@ -1,21 +1,51 @@
 import datetime
+from django.utils import timezone
+
 from django.contrib.auth.models import User
-from ..models import Group, Student, TaskCollection, Task, Score
+from django.contrib.auth.models import Group as _Group
+
+from hof.models import Group, Student, TaskCollection, Task, Score
+from hof.models import DayOfTheWeek
+
 
 def run():
     # Clearance
-    Group.objects.filter().delete()
-    Student.objects.filter().delete()
-    TaskCollection.objects.filter().delete()
-    Task.objects.filter().delete()
-    Score.objects.filter().delete()
+    User.objects.filter(groups__name='Lecturer').delete()
+    Group.objects.all().delete()
+    Student.objects.all().delete()
+    TaskCollection.objects.all().delete()
+    Task.objects.all().delete()
+    Score.objects.all().delete()
+
+    # Lecturers
+    lecturer_group, created = _Group.objects.get_or_create(name='Lecturer')
+
+    lecturer1 = User(
+        username='mateusz',
+        password='expass123',
+        email='mateusz@example.com',
+        first_name='Mateusz',
+        last_name='Example'
+    )
+    lecturer1.save()
+    lecturer_group.user_set.add(lecturer1)
+
+    lecturer2 = User(
+        username='krzysiu',
+        password='expass123',
+        email='krzysiu@example.com',
+        first_name='Krzysztof',
+        last_name='Przystojniak'
+    )
+    lecturer2.save()
+    lecturer_group.user_set.add(lecturer2)
 
     # Groups
-    group1 = Group(year=2019, day_of_the_week='Poniedziałek', time=datetime.time(9, 35, 0), lecturer='Krzysztof Przystojniak')
+    group1 = Group(year=2019, day_of_the_week=DayOfTheWeek.MONDAY, time=datetime.time(9, 35, 0), lecturer=lecturer1)
     group1.save()
-    group2 = Group(year=2019, day_of_the_week='Wtorek', time=datetime.time(11, 15, 0), lecturer='Mateusz Tryhard')
+    group2 = Group(year=2019, day_of_the_week=DayOfTheWeek.TUESDAY, time=datetime.time(11, 15, 0), lecturer=lecturer2)
     group2.save()
-    group3 = Group(year=2019, day_of_the_week='Środa', time=datetime.time(12, 50, 0), lecturer='Domino Komino')
+    group3 = Group(year=2019, day_of_the_week=DayOfTheWeek.WEDNESDAY, time=datetime.time(12, 50, 0), lecturer=lecturer2)
     group3.save()
 
     # TaskCollections
@@ -38,8 +68,8 @@ def run():
 
     # Score
     for s in [student1, student2, student3]:
-        score = Score(task=task1, student=s, acquired_blood_cells=1, date=datetime.datetime.now())
+        score = Score(task=task1, student=s, acquired_blood_cells=1, date=timezone.now())
         score.save()
-        score = Score(task=task2, student=s, acquired_blood_cells=0, date=datetime.datetime.now())
+        score = Score(task=task2, student=s, acquired_blood_cells=0, date=timezone.now())
         score.save()
 
