@@ -25,6 +25,9 @@ class Task(models.Model):
     max_blood_cells = models.IntegerField(default=1)
     description = models.CharField(max_length=200)
 
+    def __str__(self):
+        return f'Task: {self.description[:10]}\tMax blood cells: {self.max_blood_cells}'
+
 
 class Group(models.Model):
     year = models.IntegerField(default=int(datetime.datetime.now().year))
@@ -59,8 +62,3 @@ class Score(models.Model):
 
     def __str__(self):
         return self.acquired_blood_cells
-
-
-
-
-
