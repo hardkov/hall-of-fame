@@ -5,7 +5,7 @@
         <div class="container">
             <div class="card-deck">
             {% for group in groups %}
-              <a href="{% url 'hof:group' group.id%}" class="card text-white bg-secondary">
+              <a href="{% url 'hof:group' group.id%}" class="card mb-3 text-white bg-secondary">
               <div class="card-header">{{ group.lecturer }}</div>
                 <div class="card-body">
                   <p class="card-text">

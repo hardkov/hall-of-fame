@@ -28,6 +28,10 @@ body {
     text-align: center;
 }
 
+.card-deck .card {
+    flex-basis: 25%;
+}
+
 .card,
 .list-group-item {
     color: inherit;
