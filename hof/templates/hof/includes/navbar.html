@@ -11,18 +11,17 @@
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link" href="/groups">Groups</a>
+        <a class="nav-link" href="{% url 'hof:groups' %}">Groups</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/students">Students</a>
+        <a class="nav-link" href="{% url 'hof:students' %}">Students</a>
       </li>
     </ul>
-    <button
+    <a
     class="btn btn-outline-dark py-1"
-    type="button"
-    onclick="window.location.href = '/admin';"
+    href="/admin/login"
     >
     Sign in
-    </button>
+    </a>
   </div>
 </nav>
