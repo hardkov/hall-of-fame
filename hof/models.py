@@ -16,11 +16,17 @@ class DayOfTheWeek(models.TextChoices):
 class TaskCollection(models.Model):
     description = models.CharField(max_length=200)
 
+    def __str__(self):
+        return self.description[:10]
+
 
 class Task(models.Model):
     task_collection = models.ForeignKey(TaskCollection, on_delete=models.CASCADE)
     max_blood_cells = models.IntegerField(default=1)
     description = models.CharField(max_length=200)
+
+    def __str__(self):
+        return f'Task: {self.description[:10]}\tMax blood cells: {self.max_blood_cells}'
 
 
 class Group(models.Model):
@@ -56,8 +62,3 @@ class Score(models.Model):
 
     def __str__(self):
         return self.acquired_blood_cells
-
-
-
-
-
