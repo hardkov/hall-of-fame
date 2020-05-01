@@ -17,7 +17,7 @@ class TaskCollection(models.Model):
     description = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.description[:10]
+        return f'{self.description[:10]}'
 
 
 class Task(models.Model):
@@ -51,14 +51,14 @@ class Student(models.Model):
     nickname = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
-        return self.nickname
+        return f'{self.nickname}'
 
 
 class Score(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     acquired_blood_cells = models.IntegerField(default=0)
-    date = models.DateTimeField('due date')
+    date = models.DateTimeField('Due date')
 
     def __str__(self):
-        return self.acquired_blood_cells
+        return f'{self.acquired_blood_cells}'
