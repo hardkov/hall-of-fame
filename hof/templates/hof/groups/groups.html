@@ -1,21 +1,23 @@
 {% extends 'hof/base.html' %}
 
 {% block content %}
-    <div class="container">
-        <div class="card-deck">
-        {% for group in groups %}
-          <a href="{% url 'hof:group' group.id%}" class="card text-white bg-secondary">
-          <div class="card-header">{{ group.lecturer }}</div>
-            <div class="card-body">
-              <p class="card-text">
-                  <strong>Day:</strong> {{ group.day_of_the_week.title }} <br>
-                  <strong>Time: </strong> {{ group.time }}
-              </p>
+    <section class="groups my-4">
+        <div class="container">
+            <div class="card-deck">
+            {% for group in groups %}
+              <a href="{% url 'hof:group' group.id%}" class="card text-white bg-secondary">
+              <div class="card-header">{{ group.lecturer }}</div>
+                <div class="card-body">
+                  <p class="card-text">
+                      <strong>Day:</strong> {{ group.day_of_the_week.title }} <br>
+                      <strong>Time: </strong> {{ group.time }}
+                  </p>
+                </div>
+                <div class="card-footer">Year: {{ group.year }}</div>
+              </a>
+            {% endfor %}
+              </div>
             </div>
-            <div class="card-footer">Year: {{ group.year }}</div>
-          </a>
-        {% endfor %}
-          </div>
         </div>
-    </div>
+    </section>
 {% endblock %}

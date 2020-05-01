@@ -38,11 +38,3 @@ body {
 .list-group-item:hover {
     text-decoration: none;
 }
-
-.students {
-    padding: 1rem 0;
-}
-
-.students__count {
-    margin-bottom: 1rem;
-}

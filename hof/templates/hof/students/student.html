@@ -16,10 +16,20 @@
             {% endif %}
             <h5><strong>Group: </strong>{{ student.group }}</h5>
 
-            <h4 class="mt-5">Lastest scores:</h4>
-            <div class="student-scores">
-                {% for score in student.score_set.all %}
-                    <p>{{ score.task }}</p>
+            <h4 class="mt-5 mb-3">Lastest scores:</h4>
+            <div class="list-group">
+                {% for score in student.score_set.all|slice:":3" %}
+                <div href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between mb-3">
+                        <h5 class="mb-1">Task: {{ score.task.description }}</h5>
+                        <small>{{ score.date | date }}</small>
+                    </div>
+                    <p class="mb-1">
+                        Scored <strong>{{ score.acquired_blood_cells }}</strong>
+                        out of <strong>{{ score.task.max_blood_cells }}</strong>
+                    </p>
+                    <small>From collection: {{ score.task.task_collection }}</small>
+                </div>
                 {% endfor %}
             </div>
         </div>
