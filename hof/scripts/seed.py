@@ -3,6 +3,7 @@ from django.utils import timezone
 
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group as _Group
+from django.contrib.auth.models import Permission, ContentType
 
 from hof.models import Group, Student, TaskCollection, Task, Score
 from hof.models import DayOfTheWeek
@@ -11,6 +12,7 @@ from hof.models import DayOfTheWeek
 def run():
     # Clearance
     User.objects.filter(groups__name='Lecturer').delete()
+    _Group.objects.filter(name='Lecturer').delete()
     Group.objects.all().delete()
     Student.objects.all().delete()
     TaskCollection.objects.all().delete()
@@ -18,26 +20,32 @@ def run():
     Score.objects.all().delete()
 
     # Lecturers
-    lecturer_group, created = _Group.objects.get_or_create(name='Lecturer')
+    lecturer_group = _Group(name='Lecturer')
+    lecturer_group.save()
+    permissions = Permission.objects.filter(
+        content_type__in=ContentType.objects.filter(app_label__contains='hof')
+    )
+    lecturer_group.permissions.add(*permissions)
+    lecturer_group.save()
 
-    lecturer1 = User(
+    lecturer1 = User.objects.create_user(
         username='mateusz',
         password='expass123',
         email='mateusz@example.com',
         first_name='Mateusz',
-        last_name='Example'
+        last_name='Example',
+        is_staff=True
     )
-    lecturer1.save()
     lecturer_group.user_set.add(lecturer1)
 
-    lecturer2 = User(
+    lecturer2 = User.objects.create_user(
         username='krzysiu',
         password='expass123',
         email='krzysiu@example.com',
         first_name='Krzysztof',
-        last_name='Przystojniak'
+        last_name='Przystojniak',
+        is_staff=True
     )
-    lecturer2.save()
     lecturer_group.user_set.add(lecturer2)
 
     # Groups
