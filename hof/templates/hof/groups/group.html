@@ -3,15 +3,21 @@
 {% block content %}
     <div class="container">
         <div class="card">
-          <div class="card-header">
-              {{ group }}
-          </div>
-          <div class="card-body">
-            <h3>Student list:</h3>
-              {% for student in group.student_set.all %}
-                <p>{{ student.nickname }}</p>
-              {% endfor %}
-          </div>
+            <div class="card-header">
+                {{ group }}
+            </div>
+            <div class="card-body">
+                <h2 class="mb-3">{{ group.lecturer.first_name }} {{ group.lecturer.last_name }}'s group</h2>
+                <hr>
+                <h5>Student list:</h5>
+                <ul class="list-group">
+                    {% for student in group.student_set.all %}
+                        <a href="{% url 'hof:student' student.id%}" class="list-group-item">
+                            {{ student.nickname }}
+                        </a>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
 {% endblock %}
