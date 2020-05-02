@@ -2,16 +2,14 @@ import datetime
 from django.utils import timezone
 
 from django.contrib.auth.models import User
-from django.contrib.auth.models import Group as _Group
-from django.contrib.auth.models import Permission, ContentType
 
 from hof.models import Group, Student, TaskCollection, Task, Score
 from hof.models import DayOfTheWeek
 
+from .lecturer_group import wipe_lecturers, create_lecturers_group
+
 
 def wipe():
-    User.objects.filter(groups__name='Lecturer').delete()
-    _Group.objects.filter(name='Lecturer').delete()
     Group.objects.all().delete()
     Student.objects.all().delete()
     TaskCollection.objects.all().delete()
@@ -19,20 +17,10 @@ def wipe():
     Score.objects.all().delete()
 
 
-def create_lecturers_group():
-    lecturer_group = _Group(name='Lecturer')
-    lecturer_group.save()
-    permissions = Permission.objects.filter(
-        content_type__in=ContentType.objects.filter(app_label__contains='hof')
-    )
-    lecturer_group.permissions.add(*permissions)
-    lecturer_group.save()
-    return lecturer_group
-
-
 def run():
     # Clearance
     wipe()
+    wipe_lecturers()
     # Lecturers
     lecturer_group = create_lecturers_group()
 

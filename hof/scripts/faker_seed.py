@@ -4,22 +4,23 @@ import pytz
 from faker import Faker
 
 from django.contrib.auth.models import User
-from django.contrib.auth.models import Group as _Group
-from django.contrib.auth.models import Permission, ContentType
 
 from hof.models import Group, Student, TaskCollection, Task, Score
 from hof.models import DayOfTheWeek
 
-from hof.scripts.seed import wipe, create_lecturers_group
+from hof.scripts.seed import wipe
+from .lecturer_group import wipe_lecturers, create_lecturers_group
 
 fake = Faker(['pl-PL'])
 pl = fake['pl-PL']
-Faker.seed(4321)  # Will generate the same data
+Faker.seed(1234)  # Will generate the same data
 
 # Globals
 no_lecturers = 5
+
 no_groups = 8
-no_students = 10
+no_students_per_group = 10
+
 no_task_collections = 3
 no_tasks_per_collection = 5
 no_scores_per_student = 4
@@ -28,6 +29,7 @@ no_scores_per_student = 4
 def run():
     # Clearance
     wipe()
+    wipe_lecturers()
     # Lecturers
     lecturer_group = create_lecturers_group()
 
@@ -62,14 +64,15 @@ def run():
 
     # Students
     students = []
-    for _ in range(no_students):
-        student = Student.objects.create(
-            group=groups[random.randint(0, len(groups) - 1)],
-            first_name=pl.first_name(),
-            last_name=pl.last_name(),
-            nickname=pl.user_name()
-        )
-        students.append(student)
+    for group in groups:
+        for _ in range(no_students_per_group):
+            student = Student.objects.create(
+                group=group,
+                first_name=pl.first_name(),
+                last_name=pl.last_name(),
+                nickname=pl.user_name()
+            )
+            students.append(student)
 
     # Task Collections
     task_collections = []
@@ -97,8 +100,8 @@ def run():
             task_index = random.randint(0, len(tasks) - 1)
             random_date = pl.date_time_ad(
                 tzinfo=pytz.timezone('Europe/Warsaw'),
-                start_datetime=datetime.datetime(2012, 1, 1, tzinfo=pytz.timezone('Europe/Warsaw')),
-                end_datetime=datetime.datetime(2020, 12, 31, tzinfo=pytz.timezone('Europe/Warsaw'))
+                start_datetime=datetime.datetime(student.group.year, 1, 1, tzinfo=pytz.timezone('Europe/Warsaw')),
+                end_datetime=datetime.datetime(student.group.year, 12, 31, tzinfo=pytz.timezone('Europe/Warsaw'))
             )
             score = Score.objects.create(
                 task=tasks[task_index],
