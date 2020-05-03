@@ -11,7 +11,7 @@ admin.site.site_header = 'HOFFMAN'
 class StudentInline(admin.TabularInline):
     model = Student
     extra = 5
-
+    show_change_link = True
 
 class GroupAdmin(admin.ModelAdmin):
     list_display = ('group_name', 'year', 'day_of_the_week', 'time', 'lecturer')
@@ -27,6 +27,7 @@ class GroupAdmin(admin.ModelAdmin):
 class ScoreInline(admin.TabularInline):
     model = Score
     extra = 5
+    show_change_link = True
 
 
 class StudentAdmin(admin.ModelAdmin):
@@ -72,7 +73,7 @@ class ScoreAdmin(admin.ModelAdmin):
 class TaskInline(admin.TabularInline):
     model = Task
     extra = 5
-
+    show_change_link = True
 
 class TaskCollectionAdmin(admin.ModelAdmin):
     search_fields = ['description']
