@@ -21,6 +21,7 @@ def run():
     # Clearance
     wipe()
     wipe_lecturers()
+    
     # Lecturers
     lecturer_group = create_lecturers_group()
 
