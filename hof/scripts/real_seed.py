@@ -155,7 +155,7 @@ def run():
 
     with open(csv_filename) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
-        first_line = True                               # to be refactored
+        first_line = True
         group_itr = 0
         for row in csv_reader:
             if first_line:
@@ -171,7 +171,7 @@ def run():
                     score = Score.objects.create(
                         task=quizzes[i-1],
                         student=student,
-                        acquired_blood_cells=int(row[2*i]),
+                        acquired_blood_cells=float(row[2*i]),
                         date=timezone.now()     # change?
                     )
                     score.save()
@@ -180,7 +180,7 @@ def run():
                     score = Score.objects.create(
                         task=labs[i-1],
                         student=student,
-                        acquired_blood_cells=int(row[2*i+1]),
+                        acquired_blood_cells=float(row[2*i+1]),
                         date=timezone.now()     # change?
                     )
                     score.save()
@@ -189,7 +189,7 @@ def run():
                 score = Score.objects.create(
                     task=project3,
                     student=student,
-                    acquired_blood_cells=int(row[14]),
+                    acquired_blood_cells=float(row[14]),
                     date=timezone.now()  # change?
                 )
                 score.save()
@@ -198,7 +198,7 @@ def run():
                 score = Score.objects.create(
                     task=labs[6],
                     student=student,
-                    acquired_blood_cells=int(float(row[15])),
+                    acquired_blood_cells=float(row[15]),
                     date=timezone.now()  # change?
                 )
                 score.save()
@@ -207,7 +207,7 @@ def run():
                 score = Score.objects.create(
                     task=project1,
                     student=student,
-                    acquired_blood_cells=int(float(row[16])),
+                    acquired_blood_cells=float(row[16]),
                     date=timezone.now()  # change?
                 )
                 score.save()
@@ -216,7 +216,7 @@ def run():
                 score = Score.objects.create(
                     task=project2,
                     student=student,
-                    acquired_blood_cells=int(float(row[17])),
+                    acquired_blood_cells=float(row[17]),
                     date=timezone.now()  # change?
                 )
                 score.save()
