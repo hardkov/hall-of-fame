@@ -5,7 +5,7 @@ from django.utils.html import format_html
 from .models import *
 
 
-admin.site.site_header = 'HOFFMAN'
+admin.site.site_header = 'Hall of Fame'
 
 
 class StudentInline(admin.TabularInline):
@@ -13,15 +13,39 @@ class StudentInline(admin.TabularInline):
     extra = 5
     show_change_link = True
 
+
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ('group_name', 'year', 'day_of_the_week', 'time', 'lecturer')
-    list_editable = ('year', 'day_of_the_week', 'time', 'lecturer')
-    list_filter = ('year', 'day_of_the_week', 'lecturer')
+    list_display = ('group_name', 'year', 'day_of_the_week', 'time', 'lecturer_link')
+    list_editable = ('year', 'day_of_the_week', 'time')
+    list_filter = ('year', 'day_of_the_week')
     search_fields = ['year', 'day_of_the_week']
     inlines = [StudentInline]
 
     def group_name(self, obj):
         return obj.__str__()
+
+    def lecturer_link(self, obj):
+        url = reverse('admin:auth_user_change', args=[obj.lecturer.id])
+        return format_html("<a href='{}'>{}</a>", url, obj.lecturer.__str__())
+
+    def get_queryset(self, request):
+        qs = super(GroupAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        else:
+            return qs.filter(lecturer=request.user)
+
+    def get_list_display(self, request):
+        if request.user.is_superuser:
+            return 'group_name', 'year', 'day_of_the_week', 'time', 'lecturer_link'
+
+        return 'group_name', 'year', 'day_of_the_week', 'time', 'lecturer'
+
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.is_superuser:
+            return super(GroupAdmin, self).get_readonly_fields(request)
+
+        return 'lecturer',
 
 
 class ScoreInline(admin.TabularInline):
@@ -33,7 +57,6 @@ class ScoreInline(admin.TabularInline):
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('nickname', 'first_name', 'last_name', 'group_link')
     list_editable = ('first_name', 'last_name')
-    list_filter = ['group']
     search_fields = ('nickname', 'first_name', 'last_name')
     inlines = [ScoreInline]
 
@@ -44,6 +67,13 @@ class StudentAdmin(admin.ModelAdmin):
     def group_link(self, obj):
         url = reverse('admin:hof_group_change', args=[obj.group.id])
         return format_html("<a href='{}'>{}</a>", url, obj.group.__str__())
+
+    def get_queryset(self, request):
+        qs = super(StudentAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        else:
+            return qs.filter(group__lecturer=request.user)
 
 
 class ScoreAdmin(admin.ModelAdmin):
@@ -69,11 +99,19 @@ class ScoreAdmin(admin.ModelAdmin):
         url = reverse('admin:hof_task_change', args=[obj.task.id])
         return format_html("<a href='{}'>{}</a>", url, obj.task.__str__())
 
+    def get_queryset(self, request):
+        qs = super(ScoreAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        else:
+            return qs.filter(student__group__lecturer=request.user)
+
 
 class TaskInline(admin.TabularInline):
     model = Task
     extra = 5
     show_change_link = True
+
 
 class TaskCollectionAdmin(admin.ModelAdmin):
     search_fields = ['description']
