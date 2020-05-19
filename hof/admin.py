@@ -17,9 +17,11 @@ class StudentInline(admin.TabularInline):
 class GroupAdmin(admin.ModelAdmin):
     list_display = ('group_name', 'year', 'day_of_the_week', 'time', 'lecturer_link')
     list_editable = ('year', 'day_of_the_week', 'time')
-    list_filter = ('year', 'day_of_the_week', "lecturer")
-    search_fields = ['year', 'day_of_the_week']
+    list_filter = ('year', 'day_of_the_week', 'lecturer')
+    search_fields = ['year', 'day_of_the_week', 'lecturer__first_name', 'lecturer__last_name']
+
     inlines = [StudentInline]
+    show_full_result_count = True
 
     def group_name(self, obj):
         return obj.__str__()
@@ -53,6 +55,12 @@ class GroupAdmin(admin.ModelAdmin):
 
         return 'year', 'day_of_the_week'
 
+    def get_search_fields(self, request):
+        if request.user.is_superuser:
+            return super(GroupAdmin, self).get_search_fields(request)
+
+        return 'year', 'day_of_the_week'
+
 
 class ScoreInline(admin.TabularInline):
     model = Score
@@ -63,8 +71,19 @@ class ScoreInline(admin.TabularInline):
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('nickname', 'first_name', 'last_name', 'group_link')
     list_editable = ('first_name', 'last_name')
-    search_fields = ('nickname', 'first_name', 'last_name')
+    list_filter = ('group__year', 'group__day_of_the_week', 'group__lecturer')
+    search_fields = (
+        'nickname',
+        'first_name',
+        'last_name',
+        'group__year',
+        'group__day_of_the_week',
+        'group__lecturer__first_name',
+        'group__lecturer__last_name'
+    )
+
     inlines = [ScoreInline]
+    show_full_result_count = True
 
     def task_collection_link(self, obj):
         url = reverse('admin:hof_taskcollection_change', args=[obj.task_collection.id])
@@ -81,6 +100,18 @@ class StudentAdmin(admin.ModelAdmin):
         else:
             return qs.filter(group__lecturer=request.user)
 
+    def get_list_filter(self, request):
+        if request.user.is_superuser:
+            return super(StudentAdmin, self).get_list_filter(request)
+
+        return 'group__year', 'group__day_of_the_week'
+
+    def get_search_fields(self, request):
+        if request.user.is_superuser:
+            return super(StudentAdmin, self).get_search_fields(request)
+
+        return 'nickname', 'first_name', 'last_name', 'group__year', 'group__day_of_the_week'
+
 
 class ScoreAdmin(admin.ModelAdmin):
     list_display = ('score', 'task_link', 'student_link', 'acquired_blood_cells', 'date')
@@ -93,6 +124,7 @@ class ScoreAdmin(admin.ModelAdmin):
         'acquired_blood_cells',
         'date'
     )
+    show_full_result_count = True
 
     def score(self, obj):
         return 'details'
@@ -122,12 +154,14 @@ class TaskInline(admin.TabularInline):
 class TaskCollectionAdmin(admin.ModelAdmin):
     search_fields = ['description']
     inlines = [TaskInline]
+    show_full_result_count = True
 
 
 class TaskAdmin(admin.ModelAdmin):
     list_display = ('task_name', 'task_collection_link', 'max_blood_cells')
     list_editable = ['max_blood_cells']
     search_fields = ('task_collection__description', 'description', 'max_blood_cells')
+    show_full_result_count = True
 
     def task_collection_link(self, obj):
         url = reverse('admin:hof_taskcollection_change', args=[obj.task_collection.id])
