@@ -17,7 +17,7 @@ class StudentInline(admin.TabularInline):
 class GroupAdmin(admin.ModelAdmin):
     list_display = ('group_name', 'year', 'day_of_the_week', 'time', 'lecturer_link')
     list_editable = ('year', 'day_of_the_week', 'time')
-    list_filter = ('year', 'day_of_the_week')
+    list_filter = ('year', 'day_of_the_week', "lecturer")
     search_fields = ['year', 'day_of_the_week']
     inlines = [StudentInline]
 
@@ -46,6 +46,12 @@ class GroupAdmin(admin.ModelAdmin):
             return super(GroupAdmin, self).get_readonly_fields(request)
 
         return 'lecturer',
+
+    def get_list_filter(self, request):
+        if request.user.is_superuser:
+            return super(GroupAdmin, self).get_list_filter(request)
+
+        return 'year', 'day_of_the_week'
 
 
 class ScoreInline(admin.TabularInline):
