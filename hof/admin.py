@@ -1,4 +1,5 @@
 from django.contrib import admin, auth
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils.html import format_html
 
@@ -43,12 +44,6 @@ class GroupAdmin(admin.ModelAdmin):
 
         return 'group_name', 'year', 'day_of_the_week', 'time', 'lecturer'
 
-    def get_readonly_fields(self, request, obj=None):
-        if request.user.is_superuser:
-            return super(GroupAdmin, self).get_readonly_fields(request)
-
-        return 'lecturer',
-
     def get_list_filter(self, request):
         if request.user.is_superuser:
             return super(GroupAdmin, self).get_list_filter(request)
@@ -61,6 +56,12 @@ class GroupAdmin(admin.ModelAdmin):
 
         return 'year', 'day_of_the_week'
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'lecturer' and not request.user.is_superuser:
+            kwargs['queryset'] = get_user_model().objects.filter(username=request.user.username)
+            kwargs['initial'] = request.user
+        return super(GroupAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
 
 class ScoreInline(admin.TabularInline):
     model = Score
@@ -69,9 +70,9 @@ class ScoreInline(admin.TabularInline):
 
 
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('nickname', 'first_name', 'last_name', 'group_link')
+    list_display = ('nickname', 'first_name', 'last_name', 'group_link', 'total_score')
     list_editable = ('first_name', 'last_name')
-    list_filter = ('group__year', 'group__day_of_the_week', 'group__lecturer')
+    list_filter = ('group__year', 'group__day_of_the_week', 'group__lecturer', 'group')
     search_fields = (
         'nickname',
         'first_name',
@@ -85,26 +86,26 @@ class StudentAdmin(admin.ModelAdmin):
     inlines = [ScoreInline]
     show_full_result_count = True
 
-    def task_collection_link(self, obj):
-        url = reverse('admin:hof_taskcollection_change', args=[obj.task_collection.id])
-        return format_html("<a href='{}'>{}</a>", url, obj.task_collection.__str__())
+    def total_score(self, obj):
+        return obj.score_set.count()
 
     def group_link(self, obj):
         url = reverse('admin:hof_group_change', args=[obj.group.id])
         return format_html("<a href='{}'>{}</a>", url, obj.group.__str__())
 
     def get_queryset(self, request):
-        qs = super(StudentAdmin, self).get_queryset(request)
+        queryset = super(StudentAdmin, self).get_queryset(request)
+
         if request.user.is_superuser:
-            return qs
+            return queryset
         else:
-            return qs.filter(group__lecturer=request.user)
+            return queryset.filter(group__lecturer=request.user)
 
     def get_list_filter(self, request):
         if request.user.is_superuser:
             return super(StudentAdmin, self).get_list_filter(request)
 
-        return 'group__year', 'group__day_of_the_week'
+        return 'group__year', 'group__day_of_the_week', 'group'
 
     def get_search_fields(self, request):
         if request.user.is_superuser:
@@ -112,10 +113,17 @@ class StudentAdmin(admin.ModelAdmin):
 
         return 'nickname', 'first_name', 'last_name', 'group__year', 'group__day_of_the_week'
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'group' and not request.user.is_superuser:
+            kwargs['queryset'] = Group.objects.filter(lecturer=request.user)
+            pass
+        return super(StudentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
 
 class ScoreAdmin(admin.ModelAdmin):
     list_display = ('score', 'task_link', 'student_link', 'acquired_blood_cells', 'date')
     list_editable = ['acquired_blood_cells']
+    list_filter = ['student__group']
     search_fields = (
         'student__nickname',
         'student__first_name',
@@ -143,6 +151,19 @@ class ScoreAdmin(admin.ModelAdmin):
             return qs
         else:
             return qs.filter(student__group__lecturer=request.user)
+
+    def get_list_filter(self, request):
+        if request.user.is_superuser:
+            return super(ScoreAdmin, self).get_list_filter(request)
+
+        return []
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'student' and not request.user.is_superuser:
+            kwargs['queryset'] = Student.objects.filter(group__lecturer=request.user)
+            pass
+
+        return super(ScoreAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 class TaskInline(admin.TabularInline):
