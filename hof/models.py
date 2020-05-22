@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 from django.contrib.auth.models import User
+from django import forms
 
 
 class DayOfTheWeek(models.TextChoices):
@@ -23,6 +24,12 @@ class Task(models.Model):
     task_collection = models.ForeignKey(TaskCollection, on_delete=models.CASCADE)
     max_blood_cells = models.FloatField(default=1)
     description = models.CharField(max_length=200)
+
+    def clean(self):
+        if self.max_blood_cells < 0:
+            raise forms.ValidationError(
+                'Max blood cells amount can\'t be less than zero'
+            )
 
     def __str__(self):
         return f'{self.description[:30]}\t'
@@ -56,8 +63,20 @@ class Student(models.Model):
 class Score(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    acquired_blood_cells = models.FloatField(default=0)
+    acquired_blood_cells = models.FloatField(default=1)
     date = models.DateTimeField('Due date')
+
+    def clean(self):
+        if self.acquired_blood_cells < 0:
+            raise forms.ValidationError(
+                f'Number of acquired blood cells can\'t be less than 0'
+            )
+
+        if self.acquired_blood_cells > self.task.max_blood_cells:
+            raise forms.ValidationError(
+                f'Extending ({self.acquired_blood_cells}) max blood '
+                f'cells value ({self.task.max_blood_cells}) for this task'
+            )
 
     def __str__(self):
         return f'{self.acquired_blood_cells}'

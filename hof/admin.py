@@ -16,16 +16,13 @@ class StudentInline(admin.TabularInline):
 
 
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ('group_name', 'year', 'day_of_the_week', 'time', 'lecturer_link')
+    list_display = ('__str__', 'year', 'day_of_the_week', 'time', 'lecturer_link')
     list_editable = ('year', 'day_of_the_week', 'time')
     list_filter = ('year', 'day_of_the_week', 'lecturer')
     search_fields = ['year', 'day_of_the_week', 'lecturer__first_name', 'lecturer__last_name']
 
     inlines = [StudentInline]
     show_full_result_count = True
-
-    def group_name(self, obj):
-        return obj.__str__()
 
     def lecturer_link(self, obj):
         url = reverse('admin:auth_user_change', args=[obj.lecturer.id])
@@ -87,7 +84,12 @@ class StudentAdmin(admin.ModelAdmin):
     show_full_result_count = True
 
     def total_score(self, obj):
-        return obj.score_set.count()
+        total_score = 0
+
+        for score in obj.score_set.all():
+            total_score += score.acquired_blood_cells
+
+        return total_score
 
     def group_link(self, obj):
         url = reverse('admin:hof_group_change', args=[obj.group.id])
@@ -105,7 +107,7 @@ class StudentAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return super(StudentAdmin, self).get_list_filter(request)
 
-        return 'group__year', 'group__day_of_the_week', 'group'
+        return 'group__year', 'group__day_of_the_week'
 
     def get_search_fields(self, request):
         if request.user.is_superuser:
@@ -121,7 +123,7 @@ class StudentAdmin(admin.ModelAdmin):
 
 
 class ScoreAdmin(admin.ModelAdmin):
-    list_display = ('score', 'task_link', 'student_link', 'acquired_blood_cells', 'date')
+    list_display = ('score_placeholder', 'task_link', 'student_link', 'acquired_blood_cells', 'date')
     list_editable = ['acquired_blood_cells']
     list_filter = ['student__group']
     search_fields = (
@@ -134,7 +136,7 @@ class ScoreAdmin(admin.ModelAdmin):
     )
     show_full_result_count = True
 
-    def score(self, obj):
+    def score_placeholder(self, obj):
         return 'details'
 
     def student_link(self, obj):
@@ -179,17 +181,15 @@ class TaskCollectionAdmin(admin.ModelAdmin):
 
 
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ('task_name', 'task_collection_link', 'max_blood_cells')
+    list_display = ('__str__', 'task_collection_link', 'max_blood_cells')
     list_editable = ['max_blood_cells']
     search_fields = ('task_collection__description', 'description', 'max_blood_cells')
+
     show_full_result_count = True
 
     def task_collection_link(self, obj):
         url = reverse('admin:hof_taskcollection_change', args=[obj.task_collection.id])
         return format_html("<a href='{}'>{}</a>", url, obj.task_collection.__str__())
-
-    def task_name(self, obj):
-        return obj.__str__()
 
 
 admin.site.register(TaskCollection, TaskCollectionAdmin)
