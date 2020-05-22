@@ -2,6 +2,7 @@ from django.contrib import admin, auth
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils.html import format_html
+from django import forms
 
 from .models import *
 
@@ -87,7 +88,12 @@ class StudentAdmin(admin.ModelAdmin):
     show_full_result_count = True
 
     def total_score(self, obj):
-        return obj.score_set.count()
+        total_score = 0
+
+        for score in obj.score_set.all():
+            total_score += score.acquired_blood_cells
+
+        return total_score
 
     def group_link(self, obj):
         url = reverse('admin:hof_group_change', args=[obj.group.id])
@@ -120,6 +126,29 @@ class StudentAdmin(admin.ModelAdmin):
         return super(StudentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
+class ScoreForm(forms.ModelForm):
+    class Meta:
+        model = Score
+        fields = '__all__'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        acquired_blood_cells = cleaned_data.get('acquired_blood_cells')
+        task = cleaned_data.get('task')
+
+        if task and acquired_blood_cells:
+            if task.max_blood_cells < acquired_blood_cells:
+                raise forms.ValidationError(
+                    f'Extending ({acquired_blood_cells}) max blood '
+                    f'cells value ({task.max_blood_cells}) for this task'
+                )
+
+            if acquired_blood_cells < 0:
+                raise forms.ValidationError(
+                    f'Number of acquired blood cells can\'t be less than 0'
+                )
+
+
 class ScoreAdmin(admin.ModelAdmin):
     list_display = ('score', 'task_link', 'student_link', 'acquired_blood_cells', 'date')
     list_editable = ['acquired_blood_cells']
@@ -133,6 +162,8 @@ class ScoreAdmin(admin.ModelAdmin):
         'date'
     )
     show_full_result_count = True
+
+    form = ScoreForm
 
     def score(self, obj):
         return 'details'
@@ -151,6 +182,7 @@ class ScoreAdmin(admin.ModelAdmin):
             return qs
         else:
             return qs.filter(student__group__lecturer=request.user)
+
 
     def get_list_filter(self, request):
         if request.user.is_superuser:
@@ -178,11 +210,29 @@ class TaskCollectionAdmin(admin.ModelAdmin):
     show_full_result_count = True
 
 
+class TaskForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = '__all__'
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        max_blood_cells = cleaned_data.get('max_blood_cells')
+
+        if max_blood_cells and max_blood_cells < 0:
+            raise forms.ValidationError(
+                'Max blood cells amount can\'t be less than zero'
+            )
+
+
 class TaskAdmin(admin.ModelAdmin):
     list_display = ('task_name', 'task_collection_link', 'max_blood_cells')
     list_editable = ['max_blood_cells']
     search_fields = ('task_collection__description', 'description', 'max_blood_cells')
     show_full_result_count = True
+
+    form = TaskForm
 
     def task_collection_link(self, obj):
         url = reverse('admin:hof_taskcollection_change', args=[obj.task_collection.id])
