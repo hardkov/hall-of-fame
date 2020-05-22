@@ -63,7 +63,7 @@ class Student(models.Model):
 class Score(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    acquired_blood_cells = models.FloatField(default=0)
+    acquired_blood_cells = models.FloatField(default=1)
     date = models.DateTimeField('Due date')
 
     def clean(self):
@@ -80,5 +80,3 @@ class Score(models.Model):
 
     def __str__(self):
         return f'{self.acquired_blood_cells}'
-
-
