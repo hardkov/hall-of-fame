@@ -66,10 +66,35 @@ class ScoreInline(admin.TabularInline):
     show_change_link = True
 
 
+class OwnGroupStudentFilter(admin.SimpleListFilter):
+    title = 'group'
+
+    parameter_name = 'group'
+
+    def lookups(self, request, model_admin):
+        lookups = []
+
+        if request.user.is_superuser:
+            group_set = Group.objects.all()
+        else:
+            group_set = request.user.group_set.all()
+
+        for group in group_set:
+            lookups.append((group.id, group.__str__()))
+
+        return lookups
+
+    def queryset(self, request, queryset):
+        if self.value() is None:
+            return queryset
+
+        return queryset.filter(group=self.value())
+
+
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('nickname', 'first_name', 'last_name', 'group_link', 'total_score')
     list_editable = ('first_name', 'last_name')
-    list_filter = ('group__year', 'group__day_of_the_week', 'group__lecturer', 'group')
+    list_filter = (OwnGroupStudentFilter, 'group__year', 'group__day_of_the_week', 'group__lecturer')
     search_fields = (
         'nickname',
         'first_name',
@@ -107,7 +132,7 @@ class StudentAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return super(StudentAdmin, self).get_list_filter(request)
 
-        return 'group__year', 'group__day_of_the_week'
+        return 'group__year', 'group__day_of_the_week', OwnGroupStudentFilter
 
     def get_search_fields(self, request):
         if request.user.is_superuser:
@@ -122,10 +147,35 @@ class StudentAdmin(admin.ModelAdmin):
         return super(StudentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
+class OwnGroupScoreFilter(admin.SimpleListFilter):
+    title = 'group'
+
+    parameter_name = 'student__group'
+
+    def lookups(self, request, model_admin):
+        lookups = []
+
+        if request.user.is_superuser:
+            group_set = Group.objects.all()
+        else:
+            group_set = request.user.group_set.all()
+
+        for group in group_set:
+            lookups.append((group.id, group.__str__()))
+
+        return lookups
+
+    def queryset(self, request, queryset):
+        if self.value() is None:
+            return queryset
+
+        return queryset.filter(student__group=self.value())
+
+
 class ScoreAdmin(admin.ModelAdmin):
     list_display = ('score_placeholder', 'task_link', 'student_link', 'acquired_blood_cells', 'date')
     list_editable = ['acquired_blood_cells']
-    list_filter = ['student__group']
+    list_filter = [OwnGroupScoreFilter]
     search_fields = (
         'student__nickname',
         'student__first_name',
@@ -153,12 +203,6 @@ class ScoreAdmin(admin.ModelAdmin):
             return qs
         else:
             return qs.filter(student__group__lecturer=request.user)
-
-    def get_list_filter(self, request):
-        if request.user.is_superuser:
-            return super(ScoreAdmin, self).get_list_filter(request)
-
-        return []
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'student' and not request.user.is_superuser:
