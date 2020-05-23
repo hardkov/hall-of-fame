@@ -37,9 +37,9 @@ class GroupAdmin(admin.ModelAdmin):
 
     def get_list_display(self, request):
         if request.user.is_superuser:
-            return 'group_name', 'year', 'day_of_the_week', 'time', 'lecturer_link'
+            return super(GroupAdmin, self).get_list_display(request)
 
-        return 'group_name', 'year', 'day_of_the_week', 'time', 'lecturer'
+        return '__str__', 'year', 'day_of_the_week', 'time', 'lecturer'
 
     def get_list_filter(self, request):
         if request.user.is_superuser:
