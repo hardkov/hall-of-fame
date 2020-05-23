@@ -2,6 +2,12 @@ from django.contrib import admin, auth
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils import timezone
+from django.contrib import messages
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django import forms
+from django.contrib.admin.helpers import ActionForm
 
 from .models import *
 
@@ -91,6 +97,13 @@ class OwnGroupStudentFilter(admin.SimpleListFilter):
         return queryset.filter(group=self.value())
 
 
+class AddMultipleActionForm(ActionForm):
+    task_choices = [(task.id, task.__str__()) for task in Task.objects.all()]
+
+    task = forms.ChoiceField(choices=task_choices)
+    acquired_blood_cells = forms.FloatField()
+
+
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('nickname', 'first_name', 'last_name', 'group_link', 'total_score')
     list_editable = ('first_name', 'last_name')
@@ -104,9 +117,37 @@ class StudentAdmin(admin.ModelAdmin):
         'group__lecturer__first_name',
         'group__lecturer__last_name'
     )
+    actions = ('add_multiple_score',)
+    action_form = AddMultipleActionForm
 
     inlines = [ScoreInline]
     show_full_result_count = True
+
+    def add_multiple_score(self, request, queryset):
+        task_id = int(request.POST['task'])
+        acquired_blood_cells = float(request.POST['acquired_blood_cells'])
+
+        task = Task.objects.get(id=task_id)
+
+        for student in queryset:
+            new_score = Score(
+                task=task,
+                student=student,
+                acquired_blood_cells=acquired_blood_cells,
+                date=timezone.now()
+            )
+
+            try:
+                new_score.clean()
+            except forms.ValidationError as error:
+                self.message_user(request,
+                                  error.message, messages.ERROR)
+                return
+            else:
+                new_score.save()
+
+        self.message_user(request,
+                          f'Added scores to {queryset.count()} students')
 
     def total_score(self, obj):
         total_score = 0
