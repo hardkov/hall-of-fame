@@ -2,9 +2,13 @@ from django.contrib import admin, auth
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils import timezone
+from django.contrib import messages
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
 
 from .models import *
-
+from .forms import AddMultipleScoreForm
 
 admin.site.site_header = 'Hall of Fame'
 
@@ -104,9 +108,41 @@ class StudentAdmin(admin.ModelAdmin):
         'group__lecturer__first_name',
         'group__lecturer__last_name'
     )
+    actions = ('add_multiple_score',)
 
     inlines = [ScoreInline]
     show_full_result_count = True
+
+    def add_multiple_score(self, request, queryset):
+        form = None
+
+        if 'apply' in request.POST:
+            form = AddMultipleScoreForm(request.POST)
+
+            if form.is_valid():
+                for student in queryset:
+                    task = form.cleaned_data['task']
+                    acquired_blood_cells = form.cleaned_data['acquired_blood_cells']
+
+                    new_score = Score.objects.create(
+                        task=task,
+                        student=student,
+                        acquired_blood_cells=acquired_blood_cells,
+                        date=timezone.now()
+                    )
+
+                self.message_user(request,
+                                  f'Added scores to {queryset.count()} students')
+
+                return HttpResponseRedirect(request.get_full_path())
+
+        if not form:
+            form = AddMultipleScoreForm(initial={
+                '_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME)})
+
+        return render(request,
+                      'admin/add_multiple_score.html',
+                      {'form': form})
 
     def total_score(self, obj):
         total_score = 0
