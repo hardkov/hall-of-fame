@@ -6,11 +6,9 @@ from django.utils import timezone
 from django.contrib import messages
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from django import forms
-from django.contrib.admin.helpers import ActionForm
 
 from .models import *
-
+from .forms import AddMultipleScoreForm
 
 admin.site.site_header = 'Hall of Fame'
 
@@ -97,13 +95,6 @@ class OwnGroupStudentFilter(admin.SimpleListFilter):
         return queryset.filter(group=self.value())
 
 
-class AddMultipleActionForm(ActionForm):
-    task_choices = [(task.id, task.__str__()) for task in Task.objects.all()]
-
-    task = forms.ChoiceField(choices=task_choices)
-    acquired_blood_cells = forms.FloatField()
-
-
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('nickname', 'first_name', 'last_name', 'group_link', 'total_score')
     list_editable = ('first_name', 'last_name')
@@ -118,36 +109,40 @@ class StudentAdmin(admin.ModelAdmin):
         'group__lecturer__last_name'
     )
     actions = ('add_multiple_score',)
-    action_form = AddMultipleActionForm
 
     inlines = [ScoreInline]
     show_full_result_count = True
 
     def add_multiple_score(self, request, queryset):
-        task_id = int(request.POST['task'])
-        acquired_blood_cells = float(request.POST['acquired_blood_cells'])
+        form = None
 
-        task = Task.objects.get(id=task_id)
+        if 'apply' in request.POST:
+            form = AddMultipleScoreForm(request.POST)
 
-        for student in queryset:
-            new_score = Score(
-                task=task,
-                student=student,
-                acquired_blood_cells=acquired_blood_cells,
-                date=timezone.now()
-            )
+            if form.is_valid():
+                for student in queryset:
+                    task = form.cleaned_data['task']
+                    acquired_blood_cells = form.cleaned_data['acquired_blood_cells']
 
-            try:
-                new_score.clean()
-            except forms.ValidationError as error:
+                    new_score = Score.objects.create(
+                        task=task,
+                        student=student,
+                        acquired_blood_cells=acquired_blood_cells,
+                        date=timezone.now()
+                    )
+
                 self.message_user(request,
-                                  error.message, messages.ERROR)
-                return
-            else:
-                new_score.save()
+                                  f'Added scores to {queryset.count()} students')
 
-        self.message_user(request,
-                          f'Added scores to {queryset.count()} students')
+                return HttpResponseRedirect(request.get_full_path())
+
+        if not form:
+            form = AddMultipleScoreForm(initial={
+                '_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME)})
+
+        return render(request,
+                      'admin/add_multiple_score.html',
+                      {'form': form})
 
     def total_score(self, obj):
         total_score = 0
