@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import generic
 
-from .models import Group, Student
+from .models import Group, Student, Score, Task, TaskCollection
 
 
 # Create your views here.
@@ -50,7 +50,9 @@ class StudentView(generic.DetailView):
 # SCORE VIEWS
 def scores(request):
     # Scores needs to be grouped
-    context = {'elo': "ELO"}
+    tasks = []
+
+    context = {
+        'score_for_student': tasks,
+    }
     return render(request, 'hof/score/scores.html', context)
-
-

@@ -27,6 +27,7 @@
                 {% for student in entry.students %}
                     <a href="{% url 'hof:student' student.id%}" class="list-group-item">{{ student.nickname }}</a>
                 {% endfor %}
+             </ul>
             {% endfor %}
         </div>
     </section>
