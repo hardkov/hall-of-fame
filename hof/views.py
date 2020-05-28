@@ -86,6 +86,9 @@ def register_view(request):
     form = UserRegisterForm(request.POST or None)
 
     if form.is_valid():
+        nickname = form.cleaned_data.get('nickname')
+        first_name = form.cleaned_data.get('first_name')
+        last_name = form.cleaned_data.get('last_name')
         user = form.save(commit=False)
         password = form.cleaned_data.get('password')
         user.set_password(password)
@@ -93,6 +96,13 @@ def register_view(request):
 
         new_user = authenticate(username=user.username, password=password)
         login(request, new_user)
+
+        student = Student.objects.get(first_name=first_name,
+                                      last_name=last_name,
+                                      nickname=nickname)
+
+        student.user = new_user
+        student.save()
 
         if next:
             return redirect(next)
