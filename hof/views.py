@@ -1,19 +1,15 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from django.views import generic
-
-from .forms import UserLoginForm, UserRegisterForm
-
+import operator
 from django.contrib.auth import (
     authenticate,
-    get_user_model,
     login,
     logout
 )
-
+from django.shortcuts import redirect
 from django.shortcuts import render
+from django.views import generic
 
-from .models import Group, Student, Score, Task, TaskCollection
+from .forms import UserLoginForm, UserRegisterForm
+from .models import Group, Student, Score
 
 
 # Create your views here.
@@ -115,34 +111,18 @@ def logout_view(request):
 # SCORE VIEWS
 def scores(request):
     # Scores needs to be grouped
-    """
-    score_for_student = [];
-    scores = []
-    task_list = Task.objects.all()
-    print(task_list)
-    student_list = Student.objects.all()
-    print(student_list)
-    for task in task_list:
-        for student in student_list:
-            scores = student.score_set
-            score_for_student.append({
-                'task': task,
-                'blood_cells': 1
-            })
-
-    tasks_number = [];
-
-    total_scores = len(Score.objects.all());
-    context = {
-        'score_for_student': score_for_student,
-        'total_scores': total_scores,
-        'tasks': task_list,
-        'numbers': [1, 2, 3, 4]
-    }
-    """
-
     students = Student.objects.all()
+    scores = Score.objects.all()
+    query = {}
+    for student in students:
+        query[student] = 0
+        for score in scores:
+            if score.student == student:
+                query[student] += int(score.acquired_blood_cells)
+
+    sorted(query.items(), key=lambda x: x[1])
+
     context = {
-        'students': students,
+        'query': query
     }
     return render(request, 'hof/score/scores.html', context)

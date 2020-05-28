@@ -43,6 +43,11 @@ body {
     text-decoration: none;
 }
 
-.groups_container {
-    width: 60%;
+.no_decor {
+    color: inherit;
+    text-decoration: none;
+}
+
+.no_decor:hover {
+    text-decoration:none;
 }
