@@ -42,3 +42,7 @@ body {
 .list-group-item:hover {
     text-decoration: none;
 }
+
+.groups_container {
+    width: 60%;
+}

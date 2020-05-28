@@ -1,3 +1,4 @@
+
 from django import forms
 
 from .models import *
@@ -79,8 +80,8 @@ class UserRegisterForm(forms.ModelForm):
             raise forms.ValidationError('Passwords must match')
 
         return super(UserRegisterForm, self).clean(*args, **kwargs)
-
-
+      
+      
 class AddMultipleScoreForm(forms.ModelForm):
     class Meta:
         model = Score

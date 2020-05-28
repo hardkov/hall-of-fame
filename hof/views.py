@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views import generic
 
-from .models import Group, Student
 from .forms import UserLoginForm, UserRegisterForm
 
 from django.contrib.auth import (
@@ -12,6 +11,9 @@ from django.contrib.auth import (
     logout
 )
 
+from django.shortcuts import render
+
+from .models import Group, Student, Score, Task, TaskCollection
 
 # Create your views here.
 def index(request):
@@ -55,7 +57,8 @@ class StudentView(generic.DetailView):
     model = Student
     template_name = 'hof/students/student.html'
 
-
+    
+# LOGIN VIEWS
 def login_view(request):
     next = request.GET.get('next')
     form = UserLoginForm(request.POST or None)
@@ -106,3 +109,14 @@ def logout_view(request):
     logout(request)
 
     return redirect('/')
+
+  
+# SCORE VIEWS
+def scores(request):
+    # Scores needs to be grouped
+    tasks = []
+
+    context = {
+        'score_for_student': tasks,
+    }
+    return render(request, 'hof/score/scores.html', context)

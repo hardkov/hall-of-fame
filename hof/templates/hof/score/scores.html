@@ -1,0 +1,32 @@
+{% extends 'hof/base.html' %}
+
+{% block content %}
+    <section class="my-4">
+        <div class="jumbotron jumbotron-fluid py-3">
+            <div class="container">
+                <h1 class="display-4">Student scores</h1>
+                <p class="lead">Below table represents scores of all students.</p>
+            </div>
+        </div>
+
+        {% if 1 %}
+        <div class="container table-responsive">
+            <table class="table table-hover">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Nickname</th>
+                  <th scope="col">TASK</th>
+                  <th scope="col">Total blood cells</th>
+                </tr>
+              </thead>
+
+            </table>
+        </div>
+        {% else %}
+        <div class="container">
+            <h3>Nothing to display</h3>
+        </div>
+        {% endif %}
+    </section>
+{% endblock %}

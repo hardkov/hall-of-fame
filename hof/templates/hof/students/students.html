@@ -2,18 +2,24 @@
 
 {% block content %}
     <section class="students my-4">
+        <div class="jumbotron jumbotron-fluid py-3">
+            <div class="container">
+                <h1 class="display-4">Student list</h1>
+                <p class="lead">Students are represented in groups for each year of the subject.</p>
+            </div>
+        </div>
         <div class="container">
             <ul class="list-group mb-3">
-                <li class="list-group-item list-group-item-primary d-flex justify-content-between align-items-center">
+                <li class="list-group-item list-group-item-info d-flex justify-content-between align-items-center">
                     Total number of students
-                    <span class="badge badge-primary badge-pill">{{ student_count }}</span>
+                    <span class="badge badge-dark badge-pill">{{ student_count }}</span>
                 </li>
             </ul>
             {% for entry in students_by_year %}
             <ul class="list-group">
                 <li class="list-group-item list-group-item-secondary d-flex justify-content-between align-items-center">
                     {{ entry.year }}
-                    <span class="badge badge-primary badge-pill">
+                    <span class="badge badge-dark badge-pill">
                             {{ entry.students | length }}
                     </span>
                 </li>
@@ -21,6 +27,7 @@
                 {% for student in entry.students %}
                     <a href="{% url 'hof:student' student.id%}" class="list-group-item">{{ student.nickname }}</a>
                 {% endfor %}
+             </ul>
             {% endfor %}
         </div>
     </section>

@@ -1,38 +1,44 @@
 {% extends 'hof/base.html' %}
 
 {% block content %}
-<div class="container">
-    <div class="card">
-        <div class="card-header">
-            {{ student.nickname }}
-        </div>
-        <div class="card-body">
-            {% if user.is_authenticated %}
-                <h4><strong>Name:</strong> {{ student.first_name }} {{ student.last_name }}</h4>
-            {% else %}
-                <div class="alert alert-danger" role="alert">
-                    Student's name is visible only for lecturers.
-                </div>
-            {% endif %}
-            <h5><strong>Group: </strong>{{ student.group }}</h5>
-
-            <h4 class="mt-5 mb-3">Lastest scores:</h4>
-            <div class="list-group">
-                {% for score in student.score_set.all|slice:":3" %}
-                <div href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                    <div class="d-flex w-100 justify-content-between mb-3">
-                        <h5 class="mb-1">Task: {{ score.task.description }}</h5>
-                        <small>{{ score.date | date }}</small>
+    <div class="container">
+        <div class="card">
+            <div class="card-header text-white bg-secondary">
+                <h3>{{ student.nickname }}</h3>
+            </div>
+            <div class="card-body">
+                {% if user.is_authenticated %}
+                    <h4><strong>Name:</strong> {{ student.first_name }} {{ student.last_name }}</h4>
+                {% else %}
+                    <div class="alert alert-danger" role="alert">
+                        Student's name is visible only for lecturers.
                     </div>
-                    <p class="mb-1">
-                        Scored <strong>{{ score.acquired_blood_cells }}</strong>
-                        out of <strong>{{ score.task.max_blood_cells }}</strong>
-                    </p>
-                    <small>From collection: {{ score.task.task_collection }}</small>
-                </div>
-                {% endfor %}
+                {% endif %}
+                    <h5><strong>Group: </strong>{{ student.group }}</h5>
+
+                <hr>
+
+                {% if student.score_set.all %}
+                    <h4 class="mt-4 mb-3 pt-2">Latest scores:</h4>
+                    <div class="list-group">
+                        {% for score in student.score_set.all|slice:":5" %}
+                            <div href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between mb-3">
+                                    <h5 class="mb-1">Task: {{ score.task.description }}</h5>
+                                    <small>{{ score.date | date }}</small>
+                                </div>
+                                <p class="mb-1">
+                                    Scored <strong>{{ score.acquired_blood_cells }}</strong>
+                                    out of <strong>{{ score.task.max_blood_cells }}</strong>
+                                </p>
+                                <small>From task collection: {{ score.task.task_collection }}</small>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <h4 class="mt-4 mb-3 pt-2">No results available</h4>
+                {% endif %}
             </div>
         </div>
     </div>
-</div>
 {% endblock %}

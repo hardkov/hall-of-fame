@@ -1,23 +1,21 @@
 {% extends 'hof/base.html' %}
 
 {% block content %}
-    <div class="container">
-        <div class="card">
-            <div class="card-header">
-                {{ group }}
-            </div>
-            <div class="card-body">
-                <h2 class="mb-3">{{ group.lecturer.first_name }} {{ group.lecturer.last_name }}'s group</h2>
-                <hr>
-                <h5>Student list:</h5>
-                <ul class="list-group">
-                    {% for student in group.student_set.all %}
-                        <a href="{% url 'hof:student' student.id%}" class="list-group-item">
-                            {{ student.nickname }}
-                        </a>
-                    {% endfor %}
-                </ul>
-            </div>
+    <div class="jumbotron jumbotron-fluid py-2">
+        <div class="container">
+            <h1 class="display-4">{{ group.lecturer.first_name }} {{ group.lecturer.last_name }}'s group</h1>
+            <p class="lead">{{ group }}</p>
         </div>
+    </div>
+    <div class="container ">
+        <h5 class="mb-3">Student list:</h5>
+        <hr>
+        <ul class="list-group">
+            {% for student in group.student_set.all %}
+                <a href="{% url 'hof:student' student.id%}" class="list-group-item">
+                    {{ student.nickname }}
+                </a>
+            {% endfor %}
+        </ul>
     </div>
 {% endblock %}
