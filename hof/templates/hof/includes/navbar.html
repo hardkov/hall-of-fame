@@ -1,5 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
-    <a class="navbar-brand" href="/">Hall of Fame</a>
+    <a class="navbar-brand" href="/">
+        <img src="/static/hof/images/favicon.png" width="30" height="30" class="d-inline-block align-top" alt="">
+        Hall of Fame
+    </a>
     <button
     class="navbar-toggler"
     type="button"
@@ -17,7 +20,7 @@
             <a class="nav-link" href="{% url 'hof:students' %}">Students</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'hof:score' %}">Scores</a>
+            <a class="nav-link" href="{% url 'hof:scores' %}">Scores</a>
         </li>
     </ul>
     <ul class="navbar-nav ml-auto">

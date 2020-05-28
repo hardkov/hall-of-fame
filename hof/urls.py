@@ -12,6 +12,6 @@ urlpatterns = [
     path('students/', views.students, name='students'),
     path('student/<int:pk>', views.StudentView.as_view(), name='student'),
     # SCORE
-    path('score/', views.scoreView, name='score'),
+    path('scores/', views.scores, name='scores'),
 
 ]

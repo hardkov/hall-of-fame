@@ -51,9 +51,7 @@ class StudentView(generic.DetailView):
 # SCORE VIEWS
 def scores(request):
     # Scores needs to be grouped
-    pass
+    context = {'elo': "ELO"}
+    return render(request, 'hof/score/scores.html', context)
 
 
-class scoreView(generic.DetailView):
-    model = Score
-    template_name = 'hof/score/scores.html'
