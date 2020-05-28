@@ -31,33 +31,53 @@ class UserLoginForm(forms.Form):
 
 
 class UserRegisterForm(forms.ModelForm):
-    email = forms.EmailField(label='Email address')
+    #email = forms.EmailField(label='Email address')
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
+    nickname = forms.CharField()
 
     class Meta:
         model = User
         fields = [
             'username',
             'email',
+            'first_name',
+            'last_name',
+            'nickname',
             'password',
             'confirm_password'
         ]
 
     def clean(self, *args, **kwargs):
+        print(self.cleaned_data)
+
         email = self.cleaned_data.get('email')
         email_queryset = User.objects.filter(email=email)
 
         password = self.cleaned_data.get('password')
         confirm_password = self.cleaned_data.get('confirm_password')
 
+        first_name = self.cleaned_data.get('first_name')
+        last_name = self.cleaned_data.get('last_name')
+        nickname = self.cleaned_data.get('nickname')
+
+        student_queryset = Student.objects.filter(
+            first_name=first_name,
+            last_name=last_name,
+            nickname=nickname
+        )
+
         if email_queryset.exists():
             raise forms.ValidationError(
                 'This email has already been registered')
 
-        if password != confirm_password:
+        if not student_queryset.exists():
             raise forms.ValidationError(
-                'Passwords must match')
+                'You are not in database. Check the spelling and try again.'
+                ' If the problem persists ask your lecturer for help.')
+
+        if password != confirm_password:
+            raise forms.ValidationError('Passwords must match')
 
         return super(UserRegisterForm, self).clean(*args, **kwargs)
 

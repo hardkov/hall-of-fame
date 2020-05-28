@@ -81,7 +81,7 @@ def login_view(request):
 def register_view(request):
     next = request.GET.get('next')
     form = UserRegisterForm(request.POST or None)
-
+    print(form)
     if form.is_valid():
         user = form.save(commit=False)
         password = form.cleaned_data.get('password')
