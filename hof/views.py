@@ -15,6 +15,7 @@ from django.shortcuts import render
 
 from .models import Group, Student, Score, Task, TaskCollection
 
+
 # Create your views here.
 def index(request):
     return render(request, 'hof/index.html')
@@ -57,7 +58,7 @@ class StudentView(generic.DetailView):
     model = Student
     template_name = 'hof/students/student.html'
 
-    
+
 # LOGIN VIEWS
 def login_view(request):
     next = request.GET.get('next')
@@ -110,10 +111,11 @@ def logout_view(request):
 
     return redirect('/')
 
-  
+
 # SCORE VIEWS
 def scores(request):
     # Scores needs to be grouped
+    """
     score_for_student = [];
     scores = []
     task_list = Task.objects.all()
@@ -136,5 +138,11 @@ def scores(request):
         'total_scores': total_scores,
         'tasks': task_list,
         'numbers': [1, 2, 3, 4]
+    }
+    """
+
+    students = Student.objects.all()
+    context = {
+        'students': students,
     }
     return render(request, 'hof/score/scores.html', context)

@@ -9,26 +9,25 @@
             </div>
         </div>
 
-        {% if 1 %}
+        {% if students %}
         <div class="container table-responsive">
             <table class="table table-hover table-bordered">
               <thead class="thead-dark">
                 <tr>
                   <th scope="col">#</th>
                   <th scope="col">Nickname</th>
-                    {% for task in numbers %}
-                    <th scope="col">TASK{{forloop.counter}}</th>
-                    {% endfor %}
+
                   <th scope="col">Total blood cells</th>
                 </tr>
               </thead>
               <tbody>
-                {% for student in numbers %}
+                {% for student in students %}
                 <tr>
                   <th scope="row">{{forloop.counter}}</th>
-                  <td>Marek</td>
-                  <td>1</td>
-                  <td>8</td>
+                  <td>{{student.nickname}}</td>
+                  <td>{{student.score_set.count}}</td>
+                    {% for %}
+                    {% endfor %}
                 </tr>
                 {% endfor %}
               </tbody>
