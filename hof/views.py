@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views import generic
 
-from .models import Group, Student
+from .models import Group, Student, Score
 
 
 # Create your views here.
@@ -46,3 +46,14 @@ def students(request):
 class StudentView(generic.DetailView):
     model = Student
     template_name = 'hof/students/student.html'
+
+
+# SCORE VIEWS
+def scores(request):
+    # Scores needs to be grouped
+    pass
+
+
+class scoreView(generic.DetailView):
+    model = Score
+    template_name = 'hof/score/scores.html'

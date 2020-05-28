@@ -1,5 +1,5 @@
-from django import forms
 from .models import *
+
 
 class AddMultipleScoreForm(forms.ModelForm):
     class Meta:
