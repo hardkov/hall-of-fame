@@ -17,6 +17,7 @@ class StudentInline(admin.TabularInline):
     model = Student
     extra = 5
     show_change_link = True
+    readonly_fields = ('user',)
 
 
 class GroupAdmin(admin.ModelAdmin):
@@ -108,6 +109,7 @@ class StudentAdmin(admin.ModelAdmin):
         'group__lecturer__first_name',
         'group__lecturer__last_name'
     )
+    readonly_fields = ('user',)
     actions = ('add_multiple_score',)
 
     inlines = [ScoreInline]

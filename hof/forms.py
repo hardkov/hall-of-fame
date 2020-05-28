@@ -49,8 +49,6 @@ class UserRegisterForm(forms.ModelForm):
         ]
 
     def clean(self, *args, **kwargs):
-        print(self.cleaned_data)
-
         email = self.cleaned_data.get('email')
         email_queryset = User.objects.filter(email=email)
 
@@ -61,7 +59,7 @@ class UserRegisterForm(forms.ModelForm):
         last_name = self.cleaned_data.get('last_name')
         nickname = self.cleaned_data.get('nickname')
 
-        student_queryset = Student.objects.filter(
+        student = Student.objects.get(
             first_name=first_name,
             last_name=last_name,
             nickname=nickname
@@ -71,10 +69,15 @@ class UserRegisterForm(forms.ModelForm):
             raise forms.ValidationError(
                 'This email has already been registered')
 
-        if not student_queryset.exists():
+        if not student:
             raise forms.ValidationError(
                 'You are not in database. Check the spelling and try again.'
                 ' If the problem persists ask your lecturer for help.')
+
+        if student.user:
+            raise forms.ValidationError(
+                'There already is an account for this student'
+            )
 
         if password != confirm_password:
             raise forms.ValidationError('Passwords must match')
