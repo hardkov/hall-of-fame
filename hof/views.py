@@ -1,8 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views import generic
 
 from .models import Group, Student
+from .forms import UserLoginForm, UserRegisterForm
+
+from django.contrib.auth import (
+    authenticate,
+    get_user_model,
+    login,
+    logout
+)
 
 
 # Create your views here.
@@ -46,3 +54,51 @@ def students(request):
 class StudentView(generic.DetailView):
     model = Student
     template_name = 'hof/students/student.html'
+
+
+def login_view(request):
+    next = request.GET.get('next')
+    form = UserLoginForm(request.POST or None)
+    if form.is_valid():
+        username = form.cleaned_data.get('username')
+        password = form.cleaned_data.get('password')
+        user = authenticate(username=username, password=password)
+        login(request, user)
+        if next:
+            return redirect(next)
+        return redirect('/')
+
+    context = {
+        'form': form,
+    }
+    return render(request, "hof/accounts/login.html", context)
+
+
+def register_view(request):
+    next = request.GET.get('next')
+    form = UserRegisterForm(request.POST or None)
+
+    if form.is_valid():
+        user = form.save(commit=False)
+        password = form.cleaned_data.get('password')
+        user.set_password(password)
+        user.save()
+
+        new_user = authenticate(username=user.username, password=password)
+        login(request, new_user)
+
+        if next:
+            return redirect(next)
+
+        return redirect('/')
+
+    context = {
+        'form': form,
+    }
+    return render(request, "signup.html", context)
+
+
+def logout_view(request):
+    logout(request)
+
+    return redirect('/')

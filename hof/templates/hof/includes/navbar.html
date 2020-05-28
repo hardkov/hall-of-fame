@@ -21,7 +21,7 @@
 
         <li class="nav-item">
         {% if not user.is_authenticated %}
-            <a class="btn btn-outline-dark" href="/admin">
+            <a class="btn btn-outline-dark" href="/login">
                 Sign in
             </a>
         {% else %}
@@ -29,7 +29,7 @@
             <a class="btn btn-outline-dark" href="/admin">
                 Manage
             </a>
-            <a class="btn btn-outline-dark" href="/admin/logout">
+            <a class="btn btn-outline-dark" href="/logout">
                 Logout
             </a>
         {% endif %}
