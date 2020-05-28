@@ -19,9 +19,9 @@
                 <hr>
 
                 {% if student.score_set.all %}
-                    <h4 class="mt-5 mb-3">Latest scores:</h4>
+                    <h4 class="mt-4 mb-3 pt-2">Latest scores:</h4>
                     <div class="list-group">
-                        {% for score in student.score_set.all|slice:":3" %}
+                        {% for score in student.score_set.all|slice:":5" %}
                             <div href="#" class="list-group-item list-group-item-action flex-column align-items-start">
                                 <div class="d-flex w-100 justify-content-between mb-3">
                                     <h5 class="mb-1">Task: {{ score.task.description }}</h5>
@@ -36,7 +36,7 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    <h4 class="mt-5 mb-3">No results available</h4>
+                    <h4 class="mt-4 mb-3 pt-2">No results available</h4>
                 {% endif %}
             </div>
         </div>

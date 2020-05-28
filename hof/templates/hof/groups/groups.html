@@ -8,23 +8,25 @@
                 <p class="lead"></p>
             </div>
         </div>
+
         <div class="container">
             <div class="card-deck">
-            {% for group in groups %}
-              <a href="{% url 'hof:group' group.id%}" class="card mb-3 text-white bg-secondary">
-              <div class="card-header">{{ group.lecturer }}</div>
-                <div class="card-body">
-                  <p class="card-text">
-                      <strong>Day:</strong> {{ group.day_of_the_week.title }} <br>
-                      <strong>Time: </strong> {{ group.time }}
-                  </p>
-                </div>
-                <div class="card-footer">Year: {{ group.year }}</div>
-              </a>
-
-            {% endfor %}
-              </div>
+                {% for group in groups %}
+                <a href="{% url 'hof:group' group.id%}" class="card mb-3">
+                    <div class="card-header">{{ group.lecturer }}</div>
+                    <div class="card-body">
+                        <p class="card-text">
+                          <strong>Day:</strong> {{ group.day_of_the_week.title }} <br>
+                          <strong>Time: </strong> {{ group.time }}
+                        </p>
+                    </div>
+                    <div class="card-footer text-muted">
+                    Year: {{ group.year }}
+                    </div>
+                </a>
+                {% endfor %}
             </div>
         </div>
+
     </section>
 {% endblock %}

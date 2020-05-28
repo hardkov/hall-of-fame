@@ -1,8 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from django.views import generic
 
-from .models import Group, Student, Score
+from .models import Group, Student
 
 
 # Create your views here.
