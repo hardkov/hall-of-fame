@@ -130,9 +130,10 @@ def scores(request):
             if score.student == student:
                 query[student] += int(score.acquired_blood_cells)
 
-    sorted(query.items(), key=lambda x: x[1])
+    query = sorted(query.items(), key=lambda x: x[1], reverse=True)
 
     context = {
         'query': query
     }
     return render(request, 'hof/score/scores.html', context)
+

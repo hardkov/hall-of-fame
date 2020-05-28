@@ -16,12 +16,11 @@
                 <tr>
                   <th scope="col">#</th>
                   <th scope="col">Nickname</th>
-
                   <th scope="col">Total blood cells</th>
                 </tr>
               </thead>
               <tbody>
-                {% for student, blood_cells in query.items %}
+                {% for student, blood_cells in query %}
                 <tr>
                   <th scope="row">{{forloop.counter}}</th>
                     <td>
@@ -30,7 +29,6 @@
                     </a>
                     </td>
                     <td>{{blood_cells}}</td>
-
                 </tr>
                 {% endfor %}
               </tbody>
