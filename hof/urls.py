@@ -11,7 +11,12 @@ urlpatterns = [
     # STUDENTS
     path('students/', views.students, name='students'),
     path('student/<int:pk>', views.StudentView.as_view(), name='student'),
+    
+    # LOGIN
+    path('login/', views.login_view),
+    path('signup/', views.register_view),
+    path('logout/', views.logout_view)
+
     # SCORE
     path('scores/', views.scores, name='scores'),
-
 ]

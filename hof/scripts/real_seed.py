@@ -15,6 +15,7 @@ Faker.seed(1236)  # Will generate the same data
 
 csv_filename = 'aside/example-data/hof2019.csv'
 
+
 def run():
     # Clearance
     wipe()
