@@ -47,6 +47,7 @@ def students(request):
         'students_by_year': students_by_year,
         'student_count': students_total
     }
+
     return render(request, 'hof/students/students.html', context)
 
 

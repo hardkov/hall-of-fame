@@ -1,5 +1,6 @@
 
 from django import forms
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import *
 
@@ -59,11 +60,14 @@ class UserRegisterForm(forms.ModelForm):
         last_name = self.cleaned_data.get('last_name')
         nickname = self.cleaned_data.get('nickname')
 
-        student = Student.objects.get(
-            first_name=first_name,
-            last_name=last_name,
-            nickname=nickname
-        )
+        try:
+            student = Student.objects.get(
+                first_name=first_name,
+                last_name=last_name,
+                nickname=nickname
+            )
+        except ObjectDoesNotExist:
+            student = None
 
         if email_queryset.exists():
             raise forms.ValidationError(
