@@ -114,9 +114,27 @@ def logout_view(request):
 # SCORE VIEWS
 def scores(request):
     # Scores needs to be grouped
-    tasks = []
+    score_for_student = [];
+    scores = []
+    task_list = Task.objects.all()
+    print(task_list)
+    student_list = Student.objects.all()
+    print(student_list)
+    for task in task_list:
+        for student in student_list:
+            scores = student.score_set
+            score_for_student.append({
+                'task': task,
+                'blood_cells': 1
+            })
 
+    tasks_number = [];
+
+    total_scores = len(Score.objects.all());
     context = {
-        'score_for_student': tasks,
+        'score_for_student': score_for_student,
+        'total_scores': total_scores,
+        'tasks': task_list,
+        'numbers': [1, 2, 3, 4]
     }
     return render(request, 'hof/score/scores.html', context)

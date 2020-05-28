@@ -5,22 +5,33 @@
         <div class="jumbotron jumbotron-fluid py-3">
             <div class="container">
                 <h1 class="display-4">Student scores</h1>
-                <p class="lead">Below table represents scores of all students.</p>
+                <p class="lead">Below table represents scores for each task.</p>
             </div>
         </div>
 
         {% if 1 %}
         <div class="container table-responsive">
-            <table class="table table-hover">
+            <table class="table table-hover table-bordered">
               <thead class="thead-dark">
                 <tr>
                   <th scope="col">#</th>
                   <th scope="col">Nickname</th>
-                  <th scope="col">TASK</th>
+                    {% for task in numbers %}
+                    <th scope="col">TASK{{forloop.counter}}</th>
+                    {% endfor %}
                   <th scope="col">Total blood cells</th>
                 </tr>
               </thead>
-
+              <tbody>
+                {% for student in numbers %}
+                <tr>
+                  <th scope="row">{{forloop.counter}}</th>
+                  <td>Marek</td>
+                  <td>1</td>
+                  <td>8</td>
+                </tr>
+                {% endfor %}
+              </tbody>
             </table>
         </div>
         {% else %}
