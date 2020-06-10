@@ -1,5 +1,7 @@
 {% extends 'hof/base.html' %}
 
+{% load auth_extras %}
+
 {% block content %}
     <div class="container">
         <div class="card">
@@ -7,8 +9,7 @@
                 <h3>{{ student.nickname }}</h3>
             </div>
             <div class="card-body">
-{#(student.user == user or user.groups.filter(name='Lecturer').exists())#}
-                {% if user.is_authenticated %}
+                {% if student.user == user or user|has_group:'Lecturer' or user.is_superuser %}
                     <h4><strong>Name:</strong> {{ student.first_name }} {{ student.last_name }}</h4>
                 {% else %}
                     <div class="alert alert-danger" role="alert">
