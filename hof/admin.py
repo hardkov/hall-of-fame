@@ -110,7 +110,7 @@ class StudentAdmin(admin.ModelAdmin):
                     task = form.cleaned_data['task']
                     acquired_blood_cells = form.cleaned_data['acquired_blood_cells']
 
-                    new_score = Score.objects.create(
+                    Score.objects.create(
                         task=task,
                         student=student,
                         acquired_blood_cells=acquired_blood_cells,
