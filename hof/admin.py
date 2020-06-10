@@ -1,18 +1,19 @@
-from django.contrib import admin, auth
+from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils import timezone
-from django.contrib import messages
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 
 from .models import *
 from .forms import AddMultipleScoreForm
+from .filters import OwnGroupScoreFilter, OwnGroupStudentFilter
 
 admin.site.site_header = 'Hall of Fame'
 
 
+# inlines
 class StudentInline(admin.TabularInline):
     model = Student
     extra = 5
@@ -20,6 +21,19 @@ class StudentInline(admin.TabularInline):
     readonly_fields = ('user',)
 
 
+class TaskInline(admin.TabularInline):
+    model = Task
+    extra = 5
+    show_change_link = True
+
+
+class ScoreInline(admin.TabularInline):
+    model = Score
+    extra = 5
+    show_change_link = True
+
+
+# admins
 class GroupAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'year', 'day_of_the_week', 'time', 'lecturer_link')
     list_editable = ('year', 'day_of_the_week', 'time')
@@ -62,38 +76,8 @@ class GroupAdmin(admin.ModelAdmin):
         if db_field.name == 'lecturer' and not request.user.is_superuser:
             kwargs['queryset'] = get_user_model().objects.filter(username=request.user.username)
             kwargs['initial'] = request.user
+
         return super(GroupAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-
-class ScoreInline(admin.TabularInline):
-    model = Score
-    extra = 5
-    show_change_link = True
-
-
-class OwnGroupStudentFilter(admin.SimpleListFilter):
-    title = 'group'
-
-    parameter_name = 'group'
-
-    def lookups(self, request, model_admin):
-        lookups = []
-
-        if request.user.is_superuser:
-            group_set = Group.objects.all()
-        else:
-            group_set = request.user.group_set.all()
-
-        for group in group_set:
-            lookups.append((group.id, group.__str__()))
-
-        return lookups
-
-    def queryset(self, request, queryset):
-        if self.value() is None:
-            return queryset
-
-        return queryset.filter(group=self.value())
 
 
 class StudentAdmin(admin.ModelAdmin):
@@ -181,37 +165,12 @@ class StudentAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'group' and not request.user.is_superuser:
             kwargs['queryset'] = Group.objects.filter(lecturer=request.user)
-            pass
+
         return super(StudentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
-class OwnGroupScoreFilter(admin.SimpleListFilter):
-    title = 'group'
-
-    parameter_name = 'student__group'
-
-    def lookups(self, request, model_admin):
-        lookups = []
-
-        if request.user.is_superuser:
-            group_set = Group.objects.all()
-        else:
-            group_set = request.user.group_set.all()
-
-        for group in group_set:
-            lookups.append((group.id, group.__str__()))
-
-        return lookups
-
-    def queryset(self, request, queryset):
-        if self.value() is None:
-            return queryset
-
-        return queryset.filter(student__group=self.value())
-
-
 class ScoreAdmin(admin.ModelAdmin):
-    list_display = ('score_placeholder', 'task_link', 'student_link', 'acquired_blood_cells', 'date')
+    list_display = ('score_details', 'task_link', 'student_link', 'acquired_blood_cells', 'date')
     list_editable = ['acquired_blood_cells']
     list_filter = [OwnGroupScoreFilter]
     search_fields = (
@@ -224,7 +183,7 @@ class ScoreAdmin(admin.ModelAdmin):
     )
     show_full_result_count = True
 
-    def score_placeholder(self, obj):
+    def score_details(self, obj):
         return 'details'
 
     def student_link(self, obj):
@@ -248,12 +207,6 @@ class ScoreAdmin(admin.ModelAdmin):
             pass
 
         return super(ScoreAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-
-class TaskInline(admin.TabularInline):
-    model = Task
-    extra = 5
-    show_change_link = True
 
 
 class TaskCollectionAdmin(admin.ModelAdmin):
