@@ -1,4 +1,3 @@
-import operator
 from django.contrib.auth import (
     authenticate,
     login,
@@ -12,7 +11,6 @@ from .forms import UserLoginForm, UserRegisterForm
 from .models import Group, Student, Score
 
 
-# Create your views here.
 def index(request):
     return render(request, 'hof/index.html')
 
@@ -58,7 +56,7 @@ class StudentView(generic.DetailView):
 
 # LOGIN VIEWS
 def login_view(request):
-    next = request.GET.get('next')
+    next_url = request.GET.get('next')
     form = UserLoginForm(request.POST or None)
 
     if form.is_valid():
@@ -68,25 +66,27 @@ def login_view(request):
         user = authenticate(username=username, password=password)
         login(request, user)
 
-        if next:
-            return redirect(next)
+        if next_url:
+            return redirect(next_url)
 
         return redirect('/')
 
     context = {
         'form': form,
     }
+
     return render(request, "hof/accounts/login.html", context)
 
 
 def register_view(request):
-    next = request.GET.get('next')
+    next_url = request.GET.get('next')
     form = UserRegisterForm(request.POST or None)
 
     if form.is_valid():
         nickname = form.cleaned_data.get('nickname')
         first_name = form.cleaned_data.get('first_name')
         last_name = form.cleaned_data.get('last_name')
+
         user = form.save(commit=False)
         password = form.cleaned_data.get('password')
         user.set_password(password)
@@ -102,14 +102,15 @@ def register_view(request):
         student.user = new_user
         student.save()
 
-        if next:
-            return redirect(next)
+        if next_url:
+            return redirect(next_url)
 
         return redirect('/')
 
     context = {
         'form': form,
     }
+
     return render(request, "hof/accounts/signup.html", context)
 
 
