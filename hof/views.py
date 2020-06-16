@@ -146,8 +146,6 @@ def scores(request):
 # PROFILE VIEW
 
 def profile(request):
-    # model = Student
-    # template_name = 'hof/accounts/profile.html'
     student = Student.objects.filter(user__id=request.user.id)
 
     context = {
@@ -156,11 +154,6 @@ def profile(request):
     }
 
     return render(request, 'hof/accounts/profile.html', context)
-#    user = models.OneToOneField(settings.AUTH_USER_MODEL);
-
-#    def get_queryset(self):
-#        print(Student.objects.filter(user_id=self.request.user.id))
-#        return Student.objects.filter(user_id=self.request.user.id)
 
 
 @login_required
@@ -189,7 +182,7 @@ def change_password(request):
             update_session_auth_hash(request, form.user)
             return redirect('/')
         else:
-            return redirect('/password')
+            return redirect('/profile/password')
 
     else:
         form = PasswordChangeForm(user=request.user)
