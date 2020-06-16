@@ -7,25 +7,18 @@
             <h1 class="display-4">{{ user }}'s profile</h1>
             <p class="lead">You can edit here your personal information.</p>
             <a class="lead" href="{% url 'hof:student' student.get.id %}">Click here to see your Hall of fame card</a>
-
-
         </div>
     </div>
     <div class="container">
         <ul class="list-group mb-3">
 
-            <li class="list-group-item list-group-item-info d-flex justify-content-between align-items-center">{{user}}</li>
-
+            <li class="list-group-item list-group-item-info d-flex justify-content-between align-items-center">Username: {{user.username}}</li>
             <li class="list-group-item">ID: {{ user.id }}</li>
-            <li class="list-group-item">Username: {{user.username}}</li>
             <li class="list-group-item">First name: {{user.first_name}}</li>
             <li class="list-group-item">Last name: {{user.last_name}}</li>
             <li class="list-group-item">Email: {{user.email}}</li>
-
             <a class="list-group-item list-group-item-secondary" href="{% url 'hof:edit' %}">Click here to edit</a>
-
         </ul>
-
 
         {% if student.get.score_set.all %}
                     <h4 class="mt-4 mb-3 pt-2">All scores:</h4>

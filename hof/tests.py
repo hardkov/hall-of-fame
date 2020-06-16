@@ -11,4 +11,4 @@ from .models import Group
 class StudentTest(TestCase):
 
     def test_student_sth(self):
-        self.assert_()
+        self.assert_(1, 1)

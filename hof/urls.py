@@ -1,5 +1,7 @@
 from django.urls import path
-
+from django.contrib.auth.views import (
+    PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView
+)
 from hof import views
 
 app_name = 'hof'
@@ -23,5 +25,13 @@ urlpatterns = [
     # PROFILE
     path('profile/', views.profile, name='profile'),
     path('profile/edit/', views.edit, name='edit'),
+
+    # PASSWORD
     path('profile/password/', views.change_password, name='change_password'),
+    ##
+    # path('profile/reset-password/', PasswordResetView.as_view(), name='password_reset'),
+    # path('profile/reset-password/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
+    # path(r'^profile/reset-password/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
+    #     PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    ##
 ]
