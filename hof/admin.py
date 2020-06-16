@@ -204,7 +204,6 @@ class ScoreAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'student' and not request.user.is_superuser:
             kwargs['queryset'] = Student.objects.filter(group__lecturer=request.user)
-            pass
 
         return super(ScoreAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
