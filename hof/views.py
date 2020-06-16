@@ -6,8 +6,11 @@ from django.contrib.auth import (
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views import generic
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 
-from .forms import UserLoginForm, UserRegisterForm
+from .forms import UserLoginForm, UserRegisterForm, EditProfileForm
 from .models import Group, Student, Score
 
 
@@ -139,3 +142,58 @@ def scores(request):
     }
     return render(request, 'hof/score/scores.html', context)
 
+
+# PROFILE VIEW
+
+def profile(request):
+    # model = Student
+    # template_name = 'hof/accounts/profile.html'
+    student = Student.objects.filter(user__id=request.user.id)
+
+    context = {
+        'user': request.user,
+        'student': student
+    }
+
+    return render(request, 'hof/accounts/profile.html', context)
+#    user = models.OneToOneField(settings.AUTH_USER_MODEL);
+
+#    def get_queryset(self):
+#        print(Student.objects.filter(user_id=self.request.user.id))
+#        return Student.objects.filter(user_id=self.request.user.id)
+
+
+@login_required
+def edit(request):
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=request.user)
+
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+    else:
+        form = EditProfileForm(instance=request.user)
+        context = {
+            'form': form,
+        }
+        return render(request, 'hof/accounts/edit.html', context)
+
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(data=request.POST, user=request.user)
+
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            return redirect('/')
+        else:
+            return redirect('/password')
+
+    else:
+        form = PasswordChangeForm(user=request.user)
+        context = {
+            'form': form,
+        }
+        return render(request, 'hof/accounts/change_password.html', context)

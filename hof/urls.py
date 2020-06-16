@@ -11,7 +11,7 @@ urlpatterns = [
     # STUDENTS
     path('students/', views.students, name='students'),
     path('student/<int:pk>', views.StudentView.as_view(), name='student'),
-    
+
     # LOGIN
     path('login/', views.login_view),
     path('signup/', views.register_view),
@@ -19,4 +19,9 @@ urlpatterns = [
 
     # SCORE
     path('scores/', views.scores, name='scores'),
+
+    # PROFILE
+    path('profile/', views.profile, name='profile'),
+    path('profile/edit/', views.edit, name='edit'),
+    path('password/', views.change_password, name='change_password'),
 ]

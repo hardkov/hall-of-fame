@@ -1,3 +1,4 @@
+from django.contrib.auth.forms import UserChangeForm
 from django.core.exceptions import ObjectDoesNotExist
 
 from .models import *
@@ -84,8 +85,8 @@ class UserRegisterForm(forms.ModelForm):
             raise forms.ValidationError('Passwords must match')
 
         return super(UserRegisterForm, self).clean(*args, **kwargs)
-      
-      
+
+
 class AddMultipleScoreForm(forms.ModelForm):
     class Meta:
         model = Score
@@ -94,3 +95,13 @@ class AddMultipleScoreForm(forms.ModelForm):
     _selected_action = forms.CharField(widget=forms.MultipleHiddenInput)
 
 
+class EditProfileForm(UserChangeForm):
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'password',
+        ]  # include fields

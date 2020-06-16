@@ -1,7 +1,54 @@
-{% extends 'hof/base.htm' %}
+{% extends 'hof/base.html' %}
 
 {% block content %}
-<p>
-Profile page
-</p>
+<section class="profile my-4">
+    <div class="jumbotron jumbotron-fluid py-3">
+        <div class="container">
+            <h1 class="display-4">{{ user }}'s profile</h1>
+            <p class="lead">You can edit here your personal information.</p>
+            <a class="lead" href="{% url 'hof:student' student.get.id %}">Click here to see your Hall of fame card</a>
+
+
+        </div>
+    </div>
+    <div class="container">
+        <ul class="list-group mb-3">
+
+            <li class="list-group-item list-group-item-info d-flex justify-content-between align-items-center">{{user}}</li>
+
+            <li class="list-group-item">ID: {{ user.id }}</li>
+            <li class="list-group-item">Username: {{user.username}}</li>
+            <li class="list-group-item">First name: {{user.first_name}}</li>
+            <li class="list-group-item">Last name: {{user.last_name}}</li>
+            <li class="list-group-item">Email: {{user.email}}</li>
+
+            <a class="list-group-item list-group-item-secondary" href="{% url 'hof:edit' %}">Click here to edit</a>
+
+        </ul>
+
+
+        {% if student.get.score_set.all %}
+                    <h4 class="mt-4 mb-3 pt-2">All scores:</h4>
+                    <div class="list-group">
+                        {% for score in student.get.score_set.all %}
+                            <div href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between mb-3">
+                                    <h5 class="mb-1">Task: {{ score.task.description }}</h5>
+                                    <small>{{ score.date | date }}</small>
+                                </div>
+                                <p class="mb-1">
+                                    Scored <strong>{{ score.acquired_blood_cells }}</strong>
+                                    out of <strong>{{ score.task.max_blood_cells }}</strong>
+                                </p>
+                                <small>From task collection: {{ score.task.task_collection }}</small>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <h4 class="mt-4 mb-3 pt-2">No results available</h4>
+                {% endif %}
+            </div>
+    </div>
+
+</section>
 {% endblock %}
